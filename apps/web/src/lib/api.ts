@@ -6,6 +6,7 @@ export class ApiError extends Error {
   }
 }
 let csrfToken = '';
+export const getCsrfToken = () => csrfToken;
 export async function request(path: string, options: RequestInit = {}): Promise<unknown> {
   try {
     const response = await fetch(`${import.meta.env.VITE_API_ORIGIN ?? ''}/api${path}`, {

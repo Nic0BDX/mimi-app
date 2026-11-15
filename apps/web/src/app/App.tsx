@@ -35,6 +35,10 @@ import { HomePage, GameCards, catalog } from '../pages/HomePage';
 import { AuthPage } from '../pages/AuthPages';
 import { ProfilePage } from '../pages/ProfilePage';
 import { SettingsPage } from '../pages/SettingsPage';
+import { FriendsPage } from '../pages/FriendsPage';
+import { Notifications } from '../components/Notifications';
+import { connectRealtime, useRealtime } from '../lib/realtime';
+import { useSocial } from '../stores/social';
 
 const links = [
   { to: '/', key: 'home', icon: Home },
@@ -64,6 +68,19 @@ function Layout() {
   useEffect(() => {
     void load();
   }, [load]);
+  const revision = useRealtime((s) => s.socialRevision),
+    connected = useRealtime((s) => s.connected);
+  const socialLoad = useSocial((s) => s.load),
+    socialClear = useSocial((s) => s.clear);
+  const unread = useSocial((s) => s.notifications.filter((n) => !n.readAt).length);
+  const userId = user?.id;
+  useEffect(() => {
+    if (userId) return connectRealtime();
+    socialClear();
+  }, [userId, socialClear]);
+  useEffect(() => {
+    if (userId) void socialLoad();
+  }, [userId, revision, socialLoad]);
   useEffect(() => {
     document.documentElement.lang = language;
   }, [language]);
@@ -179,11 +196,11 @@ function Layout() {
                 onClick={() => setNotifications((v) => !v)}
               >
                 <Bell size={20} />
+                {unread > 0 && <span className="notification-count">{unread}</span>}
               </button>
               {notifications && (
                 <div className="notification-popover panel">
-                  <strong>{t('notifications')}</strong>
-                  <p>{t('notificationsEmpty')}</p>
+                  <Notifications />
                   <button className="text-link" onClick={() => setNotifications(false)}>
                     {t('close')}
                   </button>
@@ -223,6 +240,11 @@ function Layout() {
           <div role="status" className="network-banner">
             <WifiOff size={18} />
             {t('offline')}
+          </div>
+        )}
+        {online && user && !connected && (
+          <div role="status" className="network-banner">
+            {t('reconnecting')}
           </div>
         )}
         {needRefresh && (
@@ -347,10 +369,6 @@ export function App() {
         <Route path="games" element={<GamesPage />} />
         <Route path="games/:id" element={<GameInfo />} />
         <Route
-          path="friends"
-          element={<InfoPage title="friendsTitle" text="friendsSoon" icon={UsersRound} />}
-        />
-        <Route
           path="my-games"
           element={<InfoPage title="myGames" text="myGamesEmpty" icon={Gamepad2} />}
         />
@@ -359,6 +377,7 @@ export function App() {
           element={<InfoPage title="rankings" text="rankingsEmpty" icon={Trophy} />}
         />
         <Route element={<Protected />}>
+          <Route path="friends" element={<FriendsPage />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>

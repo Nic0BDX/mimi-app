@@ -5,12 +5,15 @@ import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
 import { PrismaClient } from '@prisma/client';
 import { ZodError } from 'zod';
-import { Server } from 'socket.io';
 import type { Environment } from './config/env.js';
 import { ApiError } from './lib/errors.js';
 import { readSession, verifyCsrf } from './modules/auth/session.js';
 import { registerAccountRoutes } from './modules/auth/routes.js';
 import { createMailer, type Mailer } from './services/mailer.js';
+import { createHub } from './realtime/hub.js';
+import { FriendsService } from './modules/friends/service.js';
+import { registerFriendRoutes } from './modules/friends/routes.js';
+import { targetSchema, respondSchema, requestIdSchema, notificationReadSchema } from '@mimi/shared';
 
 export async function buildApp(
   env: Environment,
@@ -71,26 +74,22 @@ export async function buildApp(
   });
   await registerAccountRoutes(app, db, env, dependencies.mailer ?? createMailer(env));
 
-  // Step 1 registers no application events. Authentication and origin checks are
-  // installed now; friendship/presence handlers will be implemented in step 2.
-  const io = new Server(app.server, {
-    cors: { origin: env.WEB_ORIGIN, credentials: true },
-    maxHttpBufferSize: 16_384,
-    allowRequest: (req, callback) => callback(null, req.headers.origin === env.WEB_ORIGIN),
-  });
-  io.use(async (socket, next) => {
-    try {
-      const cookies = app.parseCookie(socket.request.headers.cookie ?? '');
-      const session = await readSession(db, { cookies }, env);
-      if (!session) return next(new Error('AUTH_REQUIRED'));
-      socket.data.userId = session.userId;
-      next();
-    } catch {
-      next(new Error('AUTH_REQUIRED'));
-    }
+  const hub = createHub(app, db, env);
+  const friends = new FriendsService(db, hub.emitUser, hub.getPresence);
+  registerFriendRoutes(app, friends);
+  hub.register('friend:request', targetSchema, (id, b) => friends.request(id, b.targetUserId));
+  hub.register('friend:respond', respondSchema, (id, b) =>
+    friends.respond(id, b.requestId, b.accept),
+  );
+  hub.register('friend:cancel', requestIdSchema, (id, b) => friends.cancel(id, b.requestId));
+  hub.register('friend:remove', targetSchema, (id, b) => friends.remove(id, b.targetUserId));
+  hub.register('user:block', targetSchema, (id, b) => friends.block(id, b.targetUserId));
+  hub.register('user:unblock', targetSchema, (id, b) => friends.unblock(id, b.targetUserId));
+  hub.register('notification:read', notificationReadSchema, (id, b) => friends.read(id, b.ids));
+  app.addHook('preClose', async () => {
+    await hub.close();
   });
   app.addHook('onClose', async () => {
-    await new Promise<void>((resolve) => io.close(() => resolve()));
     if (!dependencies.db) await db.$disconnect();
   });
   return app;

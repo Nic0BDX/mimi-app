@@ -2,6 +2,7 @@ import { Link } from 'react-router';
 import { ArrowRight, UsersRound, Mail, Dice5, Sparkles, Clock3 } from 'lucide-react';
 import { useT, type TranslationKey } from '../i18n';
 import { useAuth } from '../stores/auth';
+import { useSocial } from '../stores/social';
 
 export const catalog: {
   id: string;
@@ -63,6 +64,7 @@ export function GameCards() {
   );
 }
 export function HomePage() {
+  const social = useSocial((s) => s.snapshot);
   const t = useT(),
     user = useAuth((s) => s.user);
   return (
@@ -117,7 +119,9 @@ export function HomePage() {
                 <UsersRound size={19} />
               </span>
               <h2>{t('friends')}</h2>
-              <span className="count-pill">0</span>
+              <span className="count-pill">
+                {social.friends.filter((f) => f.presence !== 'offline').length}
+              </span>
             </div>
             <div className="empty-friends-art" aria-hidden="true">
               <img src="/avatars/fox.svg" alt="" />
@@ -125,7 +129,27 @@ export function HomePage() {
               <img src="/avatars/frog.svg" alt="" />
             </div>
             <h3>{t('friendsTitle')}</h3>
-            <p>{t('friendsEmpty')}</p>
+            {social.friends.length ? (
+              social.friends.slice(0, 5).map((friend) => (
+                <div className="person-row compact" key={friend.id}>
+                  <img src={`/avatars/${friend.avatarId}.svg`} alt="" width="36" height="36" />
+                  <div>
+                    <strong>{friend.username}</strong>
+                    <span className={`presence ${friend.presence}`}>
+                      {t(
+                        friend.presence === 'online'
+                          ? 'online'
+                          : friend.presence === 'playing'
+                            ? 'playing'
+                            : 'offlineStatus',
+                      )}
+                    </span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p>{t('friendsEmpty')}</p>
+            )}
             <Link to="/friends" className="button secondary full">
               {t('friends')}
               <ArrowRight size={16} />

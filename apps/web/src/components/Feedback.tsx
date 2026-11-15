@@ -14,6 +14,9 @@ export function ErrorMessage({ code }: { code: string | null }) {
     'RESET_INVALID',
     'INTERNAL_ERROR',
     'BAD_REQUEST',
+    'SELF_REQUEST',
+    'PLAYER_UNAVAILABLE',
+    'REQUEST_UNAVAILABLE',
   ];
   return (
     <p role="alert" className="feedback error">
