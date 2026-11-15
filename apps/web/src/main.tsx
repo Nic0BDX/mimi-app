@@ -6,6 +6,7 @@ import './styles/main.css';
 import './styles/multiplayer.css';
 import './styles/games.css';
 import './styles/draughts.css';
+import './styles/frenzy.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

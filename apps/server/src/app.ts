@@ -39,7 +39,7 @@ export async function buildApp(
   await app.register(cookie);
   await app.register(rateLimit, {
     global: true,
-    max: dependencies.rateLimit === false ? 100_000 : 100,
+    max: dependencies.rateLimit === false ? 100_000 : 300,
     timeWindow: '1 minute',
     errorResponseBuilder: () => ({ statusCode: 429, error: { code: 'RATE_LIMITED' } }),
     ...(dependencies.rateLimit === false ? { allowList: () => true } : {}),

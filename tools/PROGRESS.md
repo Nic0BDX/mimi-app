@@ -5,7 +5,7 @@
 - [x] 3. Salons, invitations, états persistés, reconnexion, chat et statistiques.
 - [x] 4a. Morpion et Puissance 4.
 - [x] 4b. Dames internationales.
-- [ ] 4c. Carte Frénésie et informations cachées.
+- [x] 4c. Carte Frénésie et informations cachées.
 - [ ] 4d. Course des Écuries.
 - [ ] 4e. Bombe à Mots et dictionnaire sous licence vérifiée.
 - [ ] 5. Finitions, simulations, tests complets, documentation et publication GitHub.
@@ -23,3 +23,8 @@ nouvelle instance de service ; identifiants d’actions et versions testés.
 
 Dames : 8 tests de règles, typage, compilation et 2 parcours Playwright valides.
 Référence des règles : FMJD, Annexes 2024, annexe 1 (prises et nulles).
+
+Carte Frénésie : 12 tests de règles et 2 parcours à deux comptes valides ; mains
+disjointes et absence de pioche/état brut dans les réponses vérifiées. Le mode défi
+du +4 autorise le bluff, contrôlé par le serveur au défi ; sinon la restriction est stricte.
+Simulations 1 000 parties et seuils de couverture : contrôle final encore à exécuter.

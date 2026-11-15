@@ -32,6 +32,7 @@ export function createHub(app: FastifyInstance, db: PrismaClient, env: Environme
   };
   const getPresence = (id: string): Presence =>
     connections.has(id) || grace.has(id) ? 'online' : 'offline';
+  const publishedPresence = new Map<string, Presence>();
   async function broadcast(id: string) {
     const relations = await db.friendship.findMany({
       where: { OR: [{ userAId: id }, { userBId: id }] },
@@ -39,10 +40,13 @@ export function createHub(app: FastifyInstance, db: PrismaClient, env: Environme
     const playing = await db.gamePlayer.findFirst({
       where: { userId: id, leftAt: null, game: { status: 'IN_PROGRESS' } },
     });
+    const current = getPresence(id) === 'offline' ? 'offline' : playing ? 'playing' : 'online';
+    if (publishedPresence.get(id) === current) return;
+    publishedPresence.set(id, current);
     for (const r of relations)
       emitUser(r.userAId === id ? r.userBId : r.userAId, 'presence:changed', {
         userId: id,
-        status: getPresence(id) === 'offline' ? 'offline' : playing ? 'playing' : 'online',
+        status: current,
       });
   }
   const safe = (work: Promise<unknown>) => {

@@ -26,6 +26,7 @@ export const coreStateSchema = z.object({
   moves: z.number().int().nonnegative(),
   finished: z.boolean(),
   ranking: z.array(z.string()),
+  forfeited: z.array(z.string()).optional(),
 });
 export type CoreState = z.infer<typeof coreStateSchema>;
 export type EngineStatus = { status: 'playing' | 'finished'; ranking: string[]; draw: boolean };
@@ -83,6 +84,7 @@ export interface GameEngine<S extends CoreState, O, A> {
   onTimeout(state: S, playerId: string): A | null;
   bot?(state: S, playerId: string, rng: RandomSource): A | null;
   getTurnSeconds?(state: S): number;
+  forfeit?(state: S, id: string, rng: RandomSource): S;
 }
 export interface RegisteredEngine {
   id: GameType;
@@ -105,6 +107,7 @@ export interface RegisteredEngine {
   bot(state: unknown, id: string, rng: RandomSource): unknown | null;
   getTurnSeconds(state: unknown): number | null;
   parseState(state: unknown): CoreState;
+  forfeit(state: unknown, id: string, rng: RandomSource): CoreState;
 }
 export function defineEngine<S extends CoreState, O, A>(
   engine: GameEngine<S, O, A>,
@@ -117,6 +120,30 @@ export function defineEngine<S extends CoreState, O, A>(
     defaultOptions: engine.defaultOptions,
     parseOptions: (o) => engine.optionsSchema.parse(o),
     parseState: (s) => engine.stateSchema.parse(s),
+    forfeit(s, id, rng) {
+      const parsed = engine.stateSchema.parse(s);
+      assertRule(
+        parsed.players.includes(id) && !parsed.finished && !parsed.forfeited?.includes(id),
+      );
+      let next = {
+        ...structuredClone(parsed),
+        moves: parsed.moves + 1,
+        forfeited: [...(parsed.forfeited ?? []), id],
+      };
+      if (engine.forfeit) next = engine.forfeit(next, id, rng) as typeof next;
+      const active = next.players.filter(
+        (p) => !next.forfeited.includes(p) && !next.ranking.includes(p),
+      );
+      if (active.length <= 1) {
+        next.finished = true;
+        next.ranking = [...new Set([...next.ranking, ...active, ...[...next.forfeited].reverse()])];
+      } else if (next.forfeited.includes(next.players[next.turn]!)) {
+        do {
+          next.turn = (next.turn + 1) % next.players.length;
+        } while (next.forfeited.includes(next.players[next.turn]!));
+      }
+      return next;
+    },
     createInitialState(players, options, rng) {
       assertRule(
         players.length >= engine.minPlayers &&
@@ -154,9 +181,12 @@ export function defineEngine<S extends CoreState, O, A>(
     },
     getStatus: (s) => engine.getStatus(engine.stateSchema.parse(s)),
     onTimeout: (s, id) => engine.onTimeout(engine.stateSchema.parse(s), id),
-    bot: (s, id, rng) =>
-      engine.bot?.(engine.stateSchema.parse(s), id, rng) ??
-      engine.onTimeout(engine.stateSchema.parse(s), id),
+    bot(s, id, rng) {
+      const state = engine.stateSchema.parse(s);
+      if (engine.bot) return engine.bot(state, id, rng);
+      const actions = engine.getLegalActions(state, id);
+      return actions.length ? actions[rng.int(actions.length)]! : null;
+    },
     getTurnSeconds: (s) => engine.getTurnSeconds?.(engine.stateSchema.parse(s)) ?? null,
   };
 }

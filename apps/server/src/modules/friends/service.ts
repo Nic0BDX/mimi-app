@@ -64,10 +64,27 @@ export class FriendsService {
         include: { blocked: { select: buddySelect } },
       }),
     ]);
+    const active = await this.db.gamePlayer.findMany({
+      where: {
+        userId: { in: relations.map((r) => (r.userAId === id ? r.userBId : r.userAId)) },
+        leftAt: null,
+        game: { status: 'IN_PROGRESS' },
+      },
+      select: { userId: true },
+    });
+    const playing = new Set(active.map((p) => p.userId));
     return {
       friends: relations.map((r) => {
         const user = r.userAId === id ? r.userB : r.userA;
-        return { ...buddy(user), presence: this.presence(user.id) };
+        return {
+          ...buddy(user),
+          presence:
+            this.presence(user.id) === 'offline'
+              ? 'offline'
+              : playing.has(user.id)
+                ? 'playing'
+                : 'online',
+        };
       }),
       incoming: incoming.map((r) => ({ id: r.id, user: buddy(r.sender) })),
       outgoing: outgoing.map((r) => ({ id: r.id, user: buddy(r.receiver) })),

@@ -546,10 +546,11 @@ export class GamesService {
       const game = await this.row(gameId, tx);
       this.member(game, id);
       if (game.status !== 'IN_PROGRESS') throw new ApiError(409, 'ROOM_UNAVAILABLE');
-      const state = getEngine(game.gameType).parseState(game.state),
-        ranking = state.players.filter((p) => p !== id).concat(id),
-        next = { ...state, finished: true, ranking };
-      await this.finish(tx, game, next);
+      if (this.member(game, id).control === 'FORFEITED') return;
+      const rng = new GameRandom(this.key, game.rngSecretEncrypted, game.rngCounter),
+        engine = getEngine(game.gameType),
+        next = engine.forfeit(game.state, id, rng);
+      if (next.finished) await this.finish(tx, game, next);
       await tx.gamePlayer.updateMany({
         where: { gameId, userId: id },
         data: { control: 'FORFEITED' },
@@ -557,10 +558,18 @@ export class GamesService {
       await tx.game.update({
         where: { id: gameId },
         data: {
-          status: 'FINISHED',
+          status: next.finished ? 'FINISHED' : 'IN_PROGRESS',
           state: json(next),
-          finishedAt: new Date(),
-          turnDeadlineAt: null,
+          finishedAt: next.finished ? new Date() : null,
+          turnDeadlineAt: next.finished
+            ? null
+            : new Date(
+                Date.now() +
+                  (engine.getTurnSeconds(next) ??
+                    roomOptionsSchema.parse(game.options).turnSeconds) *
+                    1000,
+              ),
+          rngCounter: rng.counter,
           version: { increment: 1 },
         },
       });
@@ -574,11 +583,14 @@ export class GamesService {
           versionBefore: game.version,
           versionAfter: game.version + 1,
           rngCounterBefore: game.rngCounter,
-          rngCounterAfter: game.rngCounter,
+          rngCounterAfter: rng.counter,
         },
       });
     });
-    await this.publish(gameId, 'game:finished');
+    await this.publish(
+      gameId,
+      (await this.row(gameId)).status === 'FINISHED' ? 'game:finished' : 'game:view',
+    );
     return { ok: true };
   }
   async rematch(id: string, gameId: string) {
