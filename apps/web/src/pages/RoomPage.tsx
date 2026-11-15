@@ -11,6 +11,7 @@ import { useAuth } from '../stores/auth';
 import { useSocial } from '../stores/social';
 import { ErrorMessage } from '../components/Feedback';
 import { BoardGame } from '../games/BoardGames';
+import { DraughtsGame } from '../games/DraughtsGame';
 import { gameName } from '../lib/catalog';
 import { GameOptions, readGameOptions } from '../components/GameOptions';
 const messagesSchema = z.object({ messages: z.array(chatMessageSchema) });
@@ -388,15 +389,24 @@ export function RoomPage() {
                     </span>
                     {seconds !== null && <strong role="timer">{seconds}s</strong>}
                   </div>
-                  {room.view && (
-                    <BoardGame
-                      view={room.view}
-                      onAction={(a) => {
-                        void action(a);
-                      }}
-                      disabled={busy || own?.control !== 'HUMAN'}
-                    />
-                  )}
+                  {room.view &&
+                    (room.gameType === 'dames' ? (
+                      <DraughtsGame
+                        view={room.view}
+                        onAction={(a) => {
+                          void action(a);
+                        }}
+                        disabled={busy || own?.control !== 'HUMAN'}
+                      />
+                    ) : (
+                      <BoardGame
+                        view={room.view}
+                        onAction={(a) => {
+                          void action(a);
+                        }}
+                        disabled={busy || own?.control !== 'HUMAN'}
+                      />
+                    ))}
                   <button
                     className="text-link"
                     disabled={busy}

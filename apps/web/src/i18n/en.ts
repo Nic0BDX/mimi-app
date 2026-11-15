@@ -250,4 +250,8 @@ export const en: Record<keyof typeof fr, string> = {
   optionPreview: 'Show typed letters',
   easy: 'Easy',
   hard: 'Hard',
+  kingPiece: 'King',
+  manPiece: 'Man',
+  draughtsHint:
+    'Select a piece then its destination, or choose a move below. Only maximum captures are offered.',
 };

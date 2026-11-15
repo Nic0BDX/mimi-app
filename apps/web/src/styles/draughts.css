@@ -1,0 +1,91 @@
+.draughts-board {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  max-width: 580px;
+  aspect-ratio: 1;
+  margin: 18px auto;
+  border: 8px solid #9e729c;
+  border-radius: 9px;
+  overflow: hidden;
+  box-shadow: 0 8px #5b4364;
+}
+.draughts-cell {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border: 0;
+  padding: 4px;
+  min-width: 0;
+  position: relative;
+}
+.draughts-cell:disabled {
+  opacity: 1;
+  cursor: default;
+}
+.draughts-cell.light {
+  background: #e8c7a1;
+}
+.draughts-cell.dark {
+  background: #745572;
+}
+.draughts-cell.selected {
+  box-shadow: inset 0 0 0 3px #ffe08f;
+}
+.draughts-cell.destination:after {
+  content: '';
+  position: absolute;
+  width: 30%;
+  height: 30%;
+  border-radius: 50%;
+  background: #ffe078;
+  box-shadow: 0 0 15px #ffe07888;
+}
+.draughts-piece {
+  display: grid;
+  place-items: center;
+  width: 94%;
+  height: 94%;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 0 3px #fff2,
+    0 3px #0005;
+}
+.draughts-piece.side-0 {
+  background: radial-gradient(circle at 30% 20%, #ffe69b, #e0a750);
+  color: #754122;
+  border: 2px solid #ffeac0;
+}
+.draughts-piece.side-1 {
+  background: radial-gradient(circle at 30% 20%, #b192e2, #604c89);
+  color: #ecdbff;
+  border: 2px solid #b69be2;
+}
+.legal-moves {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 15px 0;
+}
+.legal-moves .button {
+  font-size: 0.76rem;
+  min-height: 44px;
+}
+.draughts-cell:focus-visible {
+  z-index: 1;
+  outline-offset: -3px;
+}
+@media (max-width: 480px) {
+  .draughts-board {
+    border-width: 5px;
+  }
+  .draughts-cell {
+    padding: 2px;
+  }
+  .draughts-piece {
+    border-width: 1px;
+  }
+  .draughts-piece svg {
+    width: 13px;
+    height: 13px;
+  }
+}

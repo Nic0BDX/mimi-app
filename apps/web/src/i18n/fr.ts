@@ -252,4 +252,8 @@ export const fr = {
   optionPreview: 'Afficher les lettres tapées',
   easy: 'Facile',
   hard: 'Difficile',
+  kingPiece: 'Dame',
+  manPiece: 'Pion',
+  draughtsHint:
+    'Sélectionne une pièce puis sa destination, ou choisis un trajet ci-dessous. Seules les prises majoritaires sont proposées.',
 };
