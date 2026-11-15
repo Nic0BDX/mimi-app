@@ -181,8 +181,8 @@ export function HomePage() {
           <section className="development-note">
             <Sparkles size={18} />
             <div>
-              <strong>{t('inDevelopment')}</strong>
-              <p>{t('foundationNotice')}</p>
+              <strong>{t('homePromiseTitle')}</strong>
+              <p>{t('homePromiseText')}</p>
             </div>
           </section>
         </aside>

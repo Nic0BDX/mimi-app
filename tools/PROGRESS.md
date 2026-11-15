@@ -28,3 +28,17 @@ Carte Frénésie : 12 tests de règles et 2 parcours à deux comptes valides ; m
 disjointes et absence de pioche/état brut dans les réponses vérifiées. Le mode défi
 du +4 autorise le bluff, contrôlé par le serveur au défi ; sinon la restriction est stricte.
 Simulations 1 000 parties et seuils de couverture : contrôle final encore à exécuter.
+
+## Priorité du 15 novembre : rendu visuel livré avant les jeux
+
+À la demande de l’utilisateur, la suite des jeux est mise de côté. Course des
+Écuries conserve son avancement : moteur, 9 tests unitaires valides, plateau SVG et
+typage valide ; le parcours navigateur de ce jeu reste à vérifier.
+
+Rendu d’accueil finalisé : 1920×1080 sans défilement vertical nécessaire et 390×844
+sans débordement horizontal. Captures réelles dans `docs/previews/`. Aucune erreur
+JavaScript/console constatée sur l’accueil. Lint et compilation web valides.
+Sur ce PC : `pnpm dev`, puis http://localhost:5173 ; `.env` reste local et ignoré.
+Le serveur de développement et PostgreSQL local étaient actifs à la livraison.
+Pas de déploiement public du serveur effectué. Simulations globales, couverture
+90 %, Bombe à Mots et finitions métier restent ouverts pour la reprise.

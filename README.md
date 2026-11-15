@@ -7,14 +7,17 @@ Identité et dessins SVG originaux, sans assets commerciaux.
 ## État du projet
 
 - [x] Étape 1 : fondations, inscription/connexion, récupération, profil et suppression.
-- [ ] Étape 2 : amis, blocages, notifications et présence réels.
-- [ ] Étape 3 : salons, infrastructure des parties, Morpion puis Puissance 4.
+- [x] Étape 2 : amis, blocages, notifications et présence réels (mono-instance).
+- [x] Étape 3 : salons, infrastructure des parties, Morpion puis Puissance 4.
 - [ ] Étape 4 : moteurs additionnels, un jeu à la fois, règles et simulations.
 - [ ] Étape 5 : finitions multijoueurs, classement, audio et déploiement complet.
 
-Les cartes de l’accueil sont une présentation du catalogue prévu. Elles sont
-explicitement marquées « Bientôt » : aucun moteur ni ami fictif n’est présenté
-comme fonctionnel. Les compteurs de profil viennent de PostgreSQL.
+Le rendu d’accueil est disponible sur ordinateur et mobile. Captures réelles :
+[ordinateur](docs/previews/mimi-desktop.png) et [mobile](docs/previews/mimi-mobile.png).
+Les jeux non disponibles restent explicitement marqués « Bientôt » ; aucun ami
+ni score fictif n’est affiché. Les compteurs de profil viennent de PostgreSQL.
+La suite des jeux est mise de côté à la demande de l’utilisateur : avancement et
+vérifications restantes dans [tools/PROGRESS.md](tools/PROGRESS.md).
 
 ## Installation
 
