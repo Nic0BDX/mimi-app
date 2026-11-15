@@ -1,0 +1,342 @@
+.room-filter {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  margin: 22px 0;
+}
+.room-filter label {
+  min-width: 180px;
+}
+.room-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 18px;
+  margin-top: 20px;
+}
+.create-room {
+  max-width: 560px;
+  margin: auto;
+}
+.play-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 285px;
+  gap: 22px;
+  align-items: start;
+}
+.players-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.player-chip {
+  border: 1px solid var(--line);
+  background: #222a4b;
+  padding: 10px 13px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 140px;
+}
+.player-chip.current {
+  border-color: #ffda75;
+  box-shadow: 0 0 18px #ffda7514;
+}
+.player-chip img {
+  border-radius: 50%;
+}
+.player-chip strong {
+  display: block;
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+.player-chip small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.7rem;
+  margin-top: 3px;
+}
+.player-chip > div {
+  flex: 1;
+  min-width: 0;
+}
+.room-code {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.room-code > span {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.room-code > strong {
+  font-family: monospace;
+  font-size: 2rem;
+  letter-spacing: 0.14em;
+  color: #ffdd80;
+}
+.lobby-options {
+  margin: 30px 0;
+  padding: 24px 0;
+  border-block: 1px solid var(--line);
+}
+textarea {
+  font: inherit;
+  min-height: 100px;
+  border: 1px solid #8b80b349;
+  border-radius: 12px;
+  background: #121a35;
+  color: white;
+  padding: 12px;
+  max-width: 100%;
+  width: 100%;
+}
+.lobby-panel h3 {
+  margin-top: 25px;
+}
+.turn-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  font-weight: 800;
+  color: #ffe08f;
+}
+.turn-indicator strong {
+  font-variant-numeric: tabular-nums;
+  background: #ffd97716;
+  border-radius: 12px;
+  padding: 8px 12px;
+}
+.game-surface {
+  padding: 25px;
+}
+.morpion-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-width: 420px;
+  margin: 20px auto;
+}
+.board-cell {
+  aspect-ratio: 1;
+  min-height: 44px;
+  border: 1px solid #b48ae85c;
+  background: linear-gradient(145deg, #403c6c, #2c3055);
+  border-radius: 18px;
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  font-weight: 800;
+  line-height: 1;
+  box-shadow:
+    inset 0 2px #fff1,
+    0 5px #10162b;
+}
+.board-cell:not(:disabled):hover {
+  background: #675096;
+}
+.board-cell:disabled {
+  opacity: 1;
+  cursor: default;
+}
+.board-cell.piece-1 {
+  color: #ffd86d;
+}
+.board-cell.piece-2 {
+  color: #d8a3ff;
+}
+.connect-board {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 7px;
+  max-width: 550px;
+  margin: 20px auto;
+  background: linear-gradient(#586abe, #35468b);
+  padding: 12px;
+  border-radius: 19px;
+  border: 2px solid #aabfff;
+  box-shadow: 0 9px #1b2c66;
+}
+.connect-column {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  min-width: 0;
+  border-radius: 10px;
+}
+.connect-column:disabled {
+  opacity: 1;
+  cursor: default;
+}
+.connect-column:not(:disabled):hover {
+  background: #b1c6ff33;
+}
+.column-arrow {
+  color: #ffe58a;
+  text-align: center;
+  font-size: 1.2rem;
+  min-height: 24px;
+}
+.disc {
+  display: block;
+  border-radius: 50%;
+  aspect-ratio: 1;
+  width: 100%;
+  background: #1c254d;
+  box-shadow: inset 0 3px 6px #0005;
+  border: 2px solid #8ba2e766;
+}
+.disc.piece-1 {
+  background: radial-gradient(circle at 35% 25%, #fff2a7, #ffc94d 65%, #cf8f25);
+  border-color: #ffe59d;
+  animation: disc-drop 0.25s ease-out;
+}
+.disc.piece-2 {
+  background: radial-gradient(circle at 35% 25%, #ffc0e1, #ec70ae 65%, #b83c81);
+  border-color: #ffb6df;
+  animation: disc-drop 0.25s ease-out;
+}
+.chat-panel {
+  padding: 20px;
+  position: sticky;
+  top: 20px;
+}
+.chat-panel h2 {
+  font-size: 1.1rem;
+}
+.chat-messages {
+  height: 330px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 15px;
+  overflow-anchor: auto;
+}
+.chat-messages article {
+  position: relative;
+  background: #111a324d;
+  border: 1px solid var(--line);
+  padding: 10px 12px;
+  border-radius: 12px;
+}
+.chat-messages strong {
+  color: #d0b5f3;
+  font-size: 0.72rem;
+}
+.chat-messages p {
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  margin: 5px 0 0;
+  color: #e0dcef;
+}
+.chat-panel form {
+  display: flex;
+  gap: 7px;
+}
+.chat-panel input {
+  min-width: 0;
+  flex: 1;
+}
+.report-message {
+  float: right;
+  border: 0;
+  background: transparent;
+  color: #c0b3d1;
+  min-width: 32px;
+  min-height: 32px;
+  display: grid;
+  place-items: center;
+}
+.results-panel {
+  text-align: center;
+  padding: 20px;
+}
+.result-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  justify-content: center;
+  margin: 18px 0;
+  padding: 15px;
+  background: #a882e714;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+}
+.result-row:first-of-type {
+  color: #ffde7e;
+}
+.results-panel .button {
+  margin-top: 20px;
+}
+@keyframes disc-drop {
+  from {
+    transform: translateY(-55px);
+    opacity: 0.3;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@media (max-width: 1100px) {
+  .play-layout {
+    grid-template-columns: 1fr;
+  }
+  .chat-panel {
+    position: static;
+  }
+  .chat-messages {
+    height: 210px;
+  }
+}
+@media (max-width: 480px) {
+  .game-surface {
+    padding: 18px 13px;
+  }
+  .connect-board {
+    padding: 9px;
+    gap: 5px;
+  }
+  .connect-column {
+    gap: 6px;
+  }
+  .disc {
+    border-width: 1px;
+  }
+  .board-cell {
+    border-radius: 14px;
+  }
+  .morpion-board {
+    gap: 8px;
+  }
+  .page-heading > .button {
+    font-size: 0.72rem;
+    padding: 10px;
+  }
+  .room-code > strong {
+    font-size: 1.65rem;
+  }
+  .room-code {
+    gap: 9px;
+  }
+  .player-chip {
+    padding: 9px;
+    min-width: 130px;
+  }
+  .room-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .disc {
+    animation: none !important;
+  }
+}

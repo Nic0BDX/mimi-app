@@ -126,6 +126,7 @@ model Game {
   isPrivate Boolean @default(true)
   joinCode String @unique @db.VarChar(6)
   maxPlayers Int
+  kickedUserIds String[] @default([])
   options Json
   state Json?
   version Int @default(0)

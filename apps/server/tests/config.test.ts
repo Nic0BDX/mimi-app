@@ -37,6 +37,7 @@ describe('production security configuration', () => {
       SMTP_USER: 'test',
       SMTP_PASSWORD: 'test-only',
       MAIL_FROM: 'hello@example.org',
+      GAME_ENCRYPTION_KEY: 'a'.repeat(64),
     });
     expect(cookieNames(env)).toEqual({ session: '__Host-mimi_session', csrf: '__Host-mimi_csrf' });
     expect(cookieOptions(env)).toMatchObject({ httpOnly: true, secure: true, path: '/' });

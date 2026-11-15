@@ -17,6 +17,10 @@ export const envSchema = z
     SMTP_USER: z.string().optional(),
     SMTP_PASSWORD: z.string().optional(),
     MAIL_FROM: z.string().optional(),
+    GAME_ENCRYPTION_KEY: z
+      .string()
+      .regex(/^[a-fA-F0-9]{64}$/)
+      .optional(),
   })
   .superRefine((env, ctx) => {
     if (
@@ -30,6 +34,11 @@ export const envSchema = z
         message: 'Production requires HTTPS, secure cookies and SMTP.',
       });
     }
+    if (env.NODE_ENV === 'production' && !env.GAME_ENCRYPTION_KEY)
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Production requires a persistent GAME_ENCRYPTION_KEY.',
+      });
     if (
       env.MAIL_TRANSPORT === 'smtp' &&
       (!env.SMTP_HOST || !env.SMTP_USER || !env.SMTP_PASSWORD || !env.MAIL_FROM)

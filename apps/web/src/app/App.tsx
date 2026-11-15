@@ -39,6 +39,13 @@ import { FriendsPage } from '../pages/FriendsPage';
 import { Notifications } from '../components/Notifications';
 import { connectRealtime, useRealtime } from '../lib/realtime';
 import { useSocial } from '../stores/social';
+import {
+  MultiplayerPage,
+  CreateRoomPage,
+  MyGamesPage,
+  RankingsPage,
+} from '../pages/MultiplayerPages';
+import { RoomPage } from '../pages/RoomPage';
 
 const links = [
   { to: '/', key: 'home', icon: Home },
@@ -328,8 +335,11 @@ function GamesPage() {
       <header className="page-heading">
         <div>
           <h1>{t('ourGames')}</h1>
-          <p>{t('gamesNotReady')}</p>
+          <p>{t('onlineRoomsSubtitle')}</p>
         </div>
+        <Link className="button primary" to="/games/online">
+          {t('onlineRooms')}
+        </Link>
       </header>
       <GameCards />
     </>
@@ -368,15 +378,12 @@ export function App() {
         <Route path="reset-password" element={<AuthPage key="reset" mode="reset" />} />
         <Route path="games" element={<GamesPage />} />
         <Route path="games/:id" element={<GameInfo />} />
-        <Route
-          path="my-games"
-          element={<InfoPage title="myGames" text="myGamesEmpty" icon={Gamepad2} />}
-        />
-        <Route
-          path="rankings"
-          element={<InfoPage title="rankings" text="rankingsEmpty" icon={Trophy} />}
-        />
         <Route element={<Protected />}>
+          <Route path="games/online" element={<MultiplayerPage />} />
+          <Route path="games/new" element={<CreateRoomPage />} />
+          <Route path="games/room/:gameId" element={<RoomPage />} />
+          <Route path="my-games" element={<MyGamesPage />} />
+          <Route path="rankings" element={<RankingsPage />} />
           <Route path="friends" element={<FriendsPage />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="settings" element={<SettingsPage />} />

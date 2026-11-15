@@ -3,6 +3,8 @@ import { ArrowRight, UsersRound, Mail, Dice5, Sparkles, Clock3 } from 'lucide-re
 import { useT, type TranslationKey } from '../i18n';
 import { useAuth } from '../stores/auth';
 import { useSocial } from '../stores/social';
+import { useRemote } from '../lib/useRemote';
+import { catalogSchema } from '../lib/catalog';
 
 export const catalog: {
   id: string;
@@ -26,11 +28,19 @@ export const catalog: {
 ];
 export function GameCards() {
   const t = useT();
+  const { data } = useRemote('/catalog', catalogSchema);
   return (
     <div className="game-grid">
       {catalog.map((game) => (
         <article className={`game-card ${game.theme}`} key={game.id}>
-          <Link to={`/games/${game.id}`} aria-label={`${t(game.name)} — ${t('upcoming')}`}>
+          <Link
+            to={
+              data?.games.some((g) => g.id === game.id)
+                ? `/games/new?type=${game.id}`
+                : `/games/${game.id}`
+            }
+            aria-label={`${t(game.name)} — ${t(data?.games.some((g) => g.id === game.id) ? 'play' : 'upcoming')}`}
+          >
             <div className="game-cover">
               <img
                 src={`/illustrations/${game.id}.svg`}
@@ -41,7 +51,7 @@ export function GameCards() {
               />
               <span className="game-state">
                 <Clock3 size={12} />
-                {t('upcoming')}
+                {t(data?.games.some((g) => g.id === game.id) ? 'play' : 'upcoming')}
               </span>
             </div>
             <div className="game-content">

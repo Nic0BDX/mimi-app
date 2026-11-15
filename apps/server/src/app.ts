@@ -13,6 +13,9 @@ import { createMailer, type Mailer } from './services/mailer.js';
 import { createHub } from './realtime/hub.js';
 import { FriendsService } from './modules/friends/service.js';
 import { registerFriendRoutes } from './modules/friends/routes.js';
+import { GamesService } from './modules/games/service.js';
+import { registerGameRoutes } from './modules/games/routes.js';
+import { gameKey } from './services/game-rng.js';
 import { targetSchema, respondSchema, requestIdSchema, notificationReadSchema } from '@mimi/shared';
 
 export async function buildApp(
@@ -77,6 +80,10 @@ export async function buildApp(
   const hub = createHub(app, db, env);
   const friends = new FriendsService(db, hub.emitUser, hub.getPresence);
   registerFriendRoutes(app, friends);
+  const games = new GamesService(db, hub, await gameKey(env));
+  registerGameRoutes(app, hub, games);
+  await games.recover();
+  games.run();
   hub.register('friend:request', targetSchema, (id, b) => friends.request(id, b.targetUserId));
   hub.register('friend:respond', respondSchema, (id, b) =>
     friends.respond(id, b.requestId, b.accept),
@@ -87,6 +94,7 @@ export async function buildApp(
   hub.register('user:unblock', targetSchema, (id, b) => friends.unblock(id, b.targetUserId));
   hub.register('notification:read', notificationReadSchema, (id, b) => friends.read(id, b.ids));
   app.addHook('preClose', async () => {
+    games.stop();
     await hub.close();
   });
   app.addHook('onClose', async () => {

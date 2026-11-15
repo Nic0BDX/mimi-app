@@ -2,8 +2,8 @@
 
 - [x] 1. Fondations, comptes, profils, PWA et tests initiaux.
 - [x] 2. Amis réels, blocages, notifications persistantes, présence multi-onglets.
-- [ ] 3. Salons, invitations, états persistés, reconnexion, chat et statistiques.
-- [ ] 4a. Morpion et Puissance 4.
+- [x] 3. Salons, invitations, états persistés, reconnexion, chat et statistiques.
+- [x] 4a. Morpion et Puissance 4.
 - [ ] 4b. Dames internationales.
 - [ ] 4c. Carte Frénésie et informations cachées.
 - [ ] 4d. Course des Écuries.
@@ -16,3 +16,7 @@ Hébergement public complet : nécessite un serveur Node persistant, PostgreSQL 
 
 Étape 2 : 7 tests d’intégration PostgreSQL et 2 parcours Playwright (mobile/bureau)
 valides. Présence actuellement mono-instance ; aucune synchronisation Redis/horizontale revendiquée.
+
+Étapes 3/4a : 9 tests d’intégration des parties, 6 tests de règles et 4 parcours
+Playwright mobile/bureau valides. Captures consultées. Les parties survivent à une
+nouvelle instance de service ; identifiants d’actions et versions testés.

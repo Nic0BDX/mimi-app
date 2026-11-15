@@ -8,5 +8,5 @@ export default defineConfig({
   splitting: false,
   // Shared source uses TypeScript; bundle it so production Node never imports
   // workspace .ts files or relies on a development loader.
-  noExternal: ['@mimi/shared'],
+  noExternal: [/^@mimi\/shared(?:\/|$)/],
 });
