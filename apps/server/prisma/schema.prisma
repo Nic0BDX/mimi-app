@@ -1,0 +1,235 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+enum FriendRequestStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  CANCELED
+}
+enum GameStatus {
+  LOBBY
+  IN_PROGRESS
+  FINISHED
+  ABANDONED
+}
+enum PlayerControl {
+  HUMAN
+  BOT
+  FORFEITED
+}
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  CANCELED
+  EXPIRED
+}
+enum NotificationType {
+  FRIEND_REQUEST
+  FRIEND_ACCEPTED
+  GAME_INVITATION
+}
+enum ReportReason {
+  ABUSE
+  SPAM
+  OTHER
+}
+model User {
+  id String @id @default(uuid()) @db.Uuid
+  email String @unique @db.VarChar(254)
+  username String @db.VarChar(20)
+  usernameKey String @unique @db.VarChar(20)
+  passwordHash String
+  avatarId String @default("comet")
+  createdAt DateTime @default(now())
+  lastSeenAt DateTime?
+  sessions Session[]
+  resetTokens PasswordResetToken[]
+  sentRequests FriendRequest[] @relation("SentRequests")
+  receivedRequests FriendRequest[] @relation("ReceivedRequests")
+  friendshipsA Friendship[] @relation("FriendsA")
+  friendshipsB Friendship[] @relation("FriendsB")
+  blocksMade Block[] @relation("BlocksMade")
+  blocksReceived Block[] @relation("BlocksReceived")
+  hostedGames Game[]
+  gamePlayers GamePlayer[]
+  events GameEvent[]
+  invitationsSent GameInvitation[] @relation("InvitationsSent")
+  invitationsReceived GameInvitation[] @relation("InvitationsReceived")
+  notifications Notification[]
+  messages ChatMessage[]
+  reports ChatReport[]
+  stats Stat[]
+}
+model Session {
+  id String @id @default(uuid()) @db.Uuid
+  tokenHash String @unique
+  userId String @db.Uuid
+  csrfTokenHash String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  revokedAt DateTime?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
+  @@index([expiresAt])
+}
+model PasswordResetToken {
+  id String @id @default(uuid()) @db.Uuid
+  tokenHash String @unique
+  userId String @db.Uuid
+  expiresAt DateTime
+  usedAt DateTime?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
+}
+model FriendRequest {
+  id String @id @default(uuid()) @db.Uuid
+  senderId String @db.Uuid
+  receiverId String @db.Uuid
+  pairKey String
+  status FriendRequestStatus @default(PENDING)
+  createdAt DateTime @default(now())
+  respondedAt DateTime?
+  sender User @relation("SentRequests", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("ReceivedRequests", fields: [receiverId], references: [id], onDelete: Cascade)
+  @@index([receiverId, status])
+  @@index([senderId, status])
+}
+model Friendship {
+  userAId String @db.Uuid
+  userBId String @db.Uuid
+  createdAt DateTime @default(now())
+  userA User @relation("FriendsA", fields: [userAId], references: [id], onDelete: Cascade)
+  userB User @relation("FriendsB", fields: [userBId], references: [id], onDelete: Cascade)
+  @@id([userAId, userBId])
+  @@index([userBId])
+}
+model Block {
+  blockerId String @db.Uuid
+  blockedId String @db.Uuid
+  createdAt DateTime @default(now())
+  blocker User @relation("BlocksMade", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked User @relation("BlocksReceived", fields: [blockedId], references: [id], onDelete: Cascade)
+  @@id([blockerId, blockedId])
+}
+model Game {
+  id String @id @default(uuid()) @db.Uuid
+  gameType String
+  engineVersion Int @default(1)
+  status GameStatus @default(LOBBY)
+  hostId String? @db.Uuid
+  isPrivate Boolean @default(true)
+  joinCode String @unique @db.VarChar(6)
+  maxPlayers Int
+  options Json
+  state Json?
+  version Int @default(0)
+  rngSecretEncrypted String
+  rngCounter Int @default(0)
+  turnDeadlineAt DateTime?
+  createdAt DateTime @default(now())
+  startedAt DateTime?
+  finishedAt DateTime?
+  host User? @relation(fields: [hostId], references: [id], onDelete: SetNull)
+  players GamePlayer[]
+  events GameEvent[]
+  invitations GameInvitation[]
+  messages ChatMessage[]
+  @@index([status, isPrivate, gameType])
+}
+model GamePlayer {
+  gameId String @db.Uuid
+  userId String? @db.Uuid
+  seat Int
+  isReady Boolean @default(false)
+  control PlayerControl @default(HUMAN)
+  disconnectedAt DateTime?
+  reconnectDeadlineAt DateTime?
+  leftAt DateTime?
+  rank Int?
+  score Int?
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  @@id([gameId, seat])
+  @@unique([gameId, userId])
+}
+model GameInvitation {
+  id String @id @default(uuid()) @db.Uuid
+  gameId String @db.Uuid
+  senderId String @db.Uuid
+  receiverId String @db.Uuid
+  status InvitationStatus @default(PENDING)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  respondedAt DateTime?
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  sender User @relation("InvitationsSent", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("InvitationsReceived", fields: [receiverId], references: [id], onDelete: Cascade)
+  @@index([receiverId, status])
+}
+model GameEvent {
+  id String @id @default(uuid()) @db.Uuid
+  gameId String @db.Uuid
+  sequence Int
+  playerId String? @db.Uuid
+  actionId String @db.Uuid
+  action Json
+  versionBefore Int
+  versionAfter Int
+  rngCounterBefore Int
+  rngCounterAfter Int
+  createdAt DateTime @default(now())
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  player User? @relation(fields: [playerId], references: [id], onDelete: SetNull)
+  @@unique([gameId, sequence])
+  @@unique([gameId, actionId])
+}
+model Notification {
+  id String @id @default(uuid()) @db.Uuid
+  userId String @db.Uuid
+  type NotificationType
+  payload Json
+  readAt DateTime?
+  createdAt DateTime @default(now())
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId, createdAt])
+}
+model ChatMessage {
+  id String @id @default(uuid()) @db.Uuid
+  gameId String @db.Uuid
+  userId String? @db.Uuid
+  clientMessageId String @db.Uuid
+  content String @db.VarChar(500)
+  createdAt DateTime @default(now())
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  reports ChatReport[]
+  @@unique([gameId, clientMessageId])
+  @@index([gameId, createdAt])
+}
+model ChatReport {
+  id String @id @default(uuid()) @db.Uuid
+  messageId String @db.Uuid
+  reporterId String @db.Uuid
+  reason ReportReason
+  createdAt DateTime @default(now())
+  message ChatMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  reporter User @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+  @@unique([messageId, reporterId])
+}
+model Stat {
+  userId String @db.Uuid
+  gameType String
+  gamesPlayed Int @default(0)
+  wins Int @default(0)
+  draws Int @default(0)
+  bestScore Int?
+  updatedAt DateTime @updatedAt
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@id([userId, gameType])
+}
