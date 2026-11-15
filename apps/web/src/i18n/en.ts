@@ -270,4 +270,11 @@ export const en: Record<keyof typeof fr, string> = {
   challengeLost: 'Challenge lost: draw six cards and miss your turn.',
   penaltyAccepted: 'Penalty accepted.',
   points: 'Points',
+  lastRoll: 'Last roll',
+  rollDice: 'Roll the die',
+  horse: 'Horse',
+  moveHorse: 'Move horse',
+  horsesHint: 'The server rolls the die. Buttons show only legal moves.',
+  homePromiseTitle: 'The joy of playing together',
+  homePromiseText: 'Choose your world, find your friends and share a good time. Simple as that.',
 };

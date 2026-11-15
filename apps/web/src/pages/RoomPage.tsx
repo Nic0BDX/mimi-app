@@ -13,6 +13,7 @@ import { ErrorMessage } from '../components/Feedback';
 import { BoardGame } from '../games/BoardGames';
 import { DraughtsGame } from '../games/DraughtsGame';
 import { FrenzyGame } from '../games/FrenzyGame';
+import { HorsesGame } from '../games/HorsesGame';
 import { gameName } from '../lib/catalog';
 import { GameOptions, readGameOptions } from '../components/GameOptions';
 const messagesSchema = z.object({ messages: z.array(chatMessageSchema) });
@@ -391,7 +392,15 @@ export function RoomPage() {
                     {seconds !== null && <strong role="timer">{seconds}s</strong>}
                   </div>
                   {room.view &&
-                    (room.gameType === 'carte-frenesie' ? (
+                    (room.gameType === 'course-ecuries' ? (
+                      <HorsesGame
+                        view={room.view}
+                        onAction={(a) => {
+                          void action(a);
+                        }}
+                        disabled={busy || own?.control !== 'HUMAN'}
+                      />
+                    ) : room.gameType === 'carte-frenesie' ? (
                       <FrenzyGame
                         view={room.view}
                         onAction={(a) => {

@@ -272,4 +272,13 @@ export const fr = {
   challengeLost: 'Défi perdu : tu pioches six cartes et passes ton tour.',
   penaltyAccepted: 'Pénalité acceptée.',
   points: 'Points',
+  lastRoll: 'Dernier lancer',
+  rollDice: 'Lancer le dé',
+  horse: 'Cheval',
+  moveHorse: 'Avancer le cheval',
+  horsesHint:
+    'Le serveur lance le dé. Les boutons proposent uniquement les déplacements autorisés.',
+  homePromiseTitle: 'Le plaisir de jouer ensemble',
+  homePromiseText:
+    'Choisis ton univers, retrouve tes amis et partage un bon moment. Tout simplement.',
 };

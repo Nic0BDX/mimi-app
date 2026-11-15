@@ -7,6 +7,7 @@ import './styles/multiplayer.css';
 import './styles/games.css';
 import './styles/draughts.css';
 import './styles/frenzy.css';
+import './styles/horses.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

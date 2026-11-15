@@ -1,0 +1,59 @@
+.horses-board {
+  width: 100%;
+  max-width: 620px;
+  display: block;
+  margin: 20px auto;
+  overflow: visible;
+}
+.horses-board [role='button'] {
+  cursor: pointer;
+}
+.horses-board [role='button']:focus-visible {
+  outline: 3px solid #ffeaa1;
+  outline-offset: 5px;
+}
+.dice-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin: 20px 0;
+}
+.die-face {
+  width: 65px;
+  height: 65px;
+  background: linear-gradient(140deg, #fff3cd, #e9c2a5);
+  border: 2px solid #fff4e3;
+  border-radius: 16px;
+  color: #514464;
+  box-shadow: 0 5px #ab8095;
+  display: grid;
+  place-items: center;
+  font-size: 2.2rem;
+  font-weight: 900;
+}
+.horse-choices {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.horse-choices .button {
+  min-height: 44px;
+}
+.horses-game > p {
+  text-align: center;
+  margin-top: 18px;
+}
+@media (max-width: 480px) {
+  .horses-board {
+    margin-inline: 0;
+  }
+  .dice-area {
+    gap: 18px;
+  }
+  .horse-choices .button {
+    padding: 11px 13px;
+    font-size: 0.8rem;
+  }
+}

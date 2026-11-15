@@ -85,6 +85,9 @@ export const gameViewSchema = z.object({
   round: z.number().optional(),
   scores: z.array(z.number()).optional(),
   notice: z.string().optional(),
+  lastMove: z
+    .object({ id: z.number(), player: z.number(), horse: z.number(), path: z.array(z.number()) })
+    .optional(),
 });
 export const roomSchema = z.object({
   id: idSchema,

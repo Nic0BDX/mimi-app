@@ -66,6 +66,7 @@ export interface EngineView {
   round?: number;
   scores?: number[];
   notice?: string;
+  lastMove?: { id: number; player: number; horse: number; path: number[] };
 }
 export interface GameEngine<S extends CoreState, O, A> {
   id: GameType;
