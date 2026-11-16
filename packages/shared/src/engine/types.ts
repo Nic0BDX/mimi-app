@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { EstateView } from '../games/meganopoly/view.js';
 
 export const gameTypeSchema = z.enum([
   'morpion',
@@ -7,6 +8,7 @@ export const gameTypeSchema = z.enum([
   'carte-frenesie',
   'course-ecuries',
   'bombe-mots',
+  'meganopoly',
 ]);
 export type GameType = z.infer<typeof gameTypeSchema>;
 export interface RandomSource {
@@ -42,6 +44,7 @@ export const assertRule: (condition: unknown, code?: string) => asserts conditio
   if (!condition) throw new RuleError(code);
 };
 export interface EngineView {
+  estate?: EstateView;
   kind: GameType;
   players: string[];
   turn: string | null;

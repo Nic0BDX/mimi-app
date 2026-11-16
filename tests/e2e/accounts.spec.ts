@@ -54,7 +54,7 @@ test('two isolated browsers: registration, profile update, durable sessions and 
     email = `a-${id}@example.test`,
     username = `Alice_${id}`;
   await register(page, email, username);
-  await expect(page.locator('.game-card')).toHaveCount(6);
+  await expect(page.locator('.game-card')).toHaveCount(7);
   expect(
     await page
       .locator('.page-heading p')

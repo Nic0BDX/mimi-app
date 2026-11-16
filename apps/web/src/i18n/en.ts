@@ -1,5 +1,10 @@
 import type { fr } from './fr';
 export const en: Record<keyof typeof fr, string> = {
+  meganopoly: 'MÉGANOPOLY',
+  meganopolyDesc: 'Les mariés, les chiens et un empire à construire.',
+  optionRounds: 'Nombre maximal de tours de table (10 à 100)',
+  rulesMeganopoly:
+    'De 2 à 6 joueurs, 1 500 € chacun. Achetez, encaissez les loyers, construisez des maisons et hôtels, participez aux enchères et utilisez les hypothèques pour éviter la faillite. Le dernier joueur solvable gagne ; à la limite de tours, le patrimoine détermine le classement. Trois doubles envoient en prison ; sortie par double, carte ou paiement de 50 €. Jeu et cartes en français.',
   tagline: 'A little game. A great moment.',
   home: 'Home',
   games: 'Games',

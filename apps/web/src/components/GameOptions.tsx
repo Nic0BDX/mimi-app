@@ -1,6 +1,7 @@
 import type { TranslationKey } from '../i18n';
 import { useT } from '../i18n';
 const labels: Record<string, TranslationKey> = {
+  roundLimit: 'optionRounds',
   stackDrawTwo: 'optionStack',
   strictWildFour: 'optionStrictFour',
   challengeWildFour: 'optionChallenge',
@@ -50,8 +51,8 @@ export function GameOptions({ values }: { values: Record<string, unknown> }) {
             <input
               name={`option_${key}`}
               type={typeof value === 'number' ? 'number' : 'text'}
-              min="1"
-              max="5000"
+              min={key === 'roundLimit' ? 10 : 1}
+              max={key === 'roundLimit' ? 100 : 5000}
               required
               defaultValue={String(value)}
             />

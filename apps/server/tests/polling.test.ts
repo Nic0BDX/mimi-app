@@ -37,6 +37,7 @@ it.each<GameType>([
   'carte-frenesie',
   'course-ecuries',
   'bombe-mots',
+  'meganopoly',
 ])(
   'plays %s over authenticated HTTP, advances bots and survives a cold restart',
   async (gameType) => {
@@ -82,7 +83,11 @@ it.each<GameType>([
                 type: 'word',
                 word: wordsFor(room.view.sequence!).find((w) => !room.view!.usedWords?.includes(w)),
               }
-            : room.view!.legalActions[0];
+            : gameType === 'meganopoly'
+              ? (room.view!.legalActions.find((a) =>
+                  ['roll', 'buy', 'end', 'pay-debt'].includes((a as { type: string }).type),
+                ) ?? room.view!.legalActions[0])
+              : room.view!.legalActions[0];
         const result = await command('game:action', {
           gameId,
           expectedVersion: version,

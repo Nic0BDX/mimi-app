@@ -12,6 +12,7 @@ export const catalogSchema = z.object({
   ),
 });
 const names: Record<GameType, TranslationKey> = {
+  meganopoly: 'meganopoly',
   morpion: 'morpion',
   'puissance-quatre': 'connect',
   dames: 'checkers',

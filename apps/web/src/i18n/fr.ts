@@ -313,5 +313,10 @@ export const fr = {
   audioUnavailable: 'Le son est indisponible dans ce navigateur.',
   seeAllFriends: 'Voir tous mes amis',
   guestPlayer: 'Invité',
+  meganopoly: 'MÉGANOPOLY',
+  meganopolyDesc: 'Les mariés, les chiens et un empire à construire.',
+  optionRounds: 'Nombre maximal de tours de table (10 à 100)',
+  rulesMeganopoly:
+    'De 2 à 6 joueurs, avec 1 500 € chacun. Lancez deux dés, achetez les propriétés ou proposez-les aux enchères. Encaissez les loyers ; un groupe complet permet de construire uniformément jusqu’à l’hôtel. Hypothéquez ou vendez vos bâtiments pour régler vos dettes. Un double permet de rejouer, trois doubles envoient en prison. Sortez avec un double, une carte ou 50 €. Le dernier joueur solvable gagne ; à la limite de tours, le plus grand patrimoine remporte la partie. Parking gratuit sans cagnotte. Les textes illisibles de la photo sont adaptés en français.',
   joinTable: 'Ta place t’attend',
 };

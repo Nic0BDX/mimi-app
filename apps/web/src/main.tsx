@@ -9,6 +9,7 @@ import './styles/draughts.css';
 import './styles/frenzy.css';
 import './styles/horses.css';
 import './styles/words.css';
+import './styles/meganopoly.css';
 import './styles/polish.css';
 import './styles/preview.css';
 import '@fontsource-variable/nunito/index.css';

@@ -14,8 +14,9 @@ Identité NIMIMI, illustrations locales et avatars SVG originaux.
 
 Le rendu d’accueil est disponible sur ordinateur et mobile. Captures réelles :
 [ordinateur](docs/previews/nimimi-desktop.png) et [mobile](docs/previews/nimimi-mobile.png).
-Les six jeux sont disponibles : Morpion+, Puissance 4+, Dames+, Carte Étoile,
-Course des Pions et Mot Mystère. Aucun ami ni score fictif n’est affiché.
+Les sept jeux sont disponibles : Morpion+, Puissance 4+, Dames+, Carte Étoile,
+Course des Pions, Mot Mystère et [MÉGANOPOLY](docs/MEGANOPOLY.md).
+Aucun ami ni score fictif n’est affiché.
 Les compteurs de profil viennent de PostgreSQL. Le suivi principal est
 [PROGRESS.md](PROGRESS.md), les décisions sont dans [DECISIONS.md](DECISIONS.md).
 Résultats et limites : [RAPPORT_FINAL.md](RAPPORT_FINAL.md).
@@ -159,7 +160,7 @@ sécurisés. Le mode console expose les liens de récupération uniquement en de
 ### Frontend Vercel/Netlify
 
 Le déploiement public [NIMIMI](https://mimi-app-seven.vercel.app) propose l’accueil,
-l’inscription, la connexion, les six jeux et les sessions persistantes avec PostgreSQL Neon.
+l’inscription, la connexion, les sept jeux et les sessions persistantes avec PostgreSQL Neon.
 La compilation `node tools/vercel-build.mjs` prépare le frontend et l’API complète.
 Les parcours réels sur ordinateur et mobile sont consignés dans
 [production-check.json](docs/previews/production-check.json).

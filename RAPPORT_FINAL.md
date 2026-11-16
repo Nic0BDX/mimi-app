@@ -200,3 +200,21 @@ rechargement sur ordinateur et mobile. Le robot avance en production et aucune
 erreur JavaScript n’est observée. Les comptes temporaires sont supprimés.
 [Résultats publics](docs/previews/production-games-check.json) et douze captures
 `docs/previews/live-*-desktop.png` / `live-*-mobile.png` conservés.
+
+## MÉGANOPOLY en français
+
+Septième jeu du catalogue, pour 2 à 6 humains ou robots : 40 cases, 22 propriétés,
+quatre voyages en avion, Uber Eats, Chiefs et 24 cartes Dalmatien/Golden.
+Le portrait, le logo et les dessins des paquets utilisent l’image fournie, conservée
+sans retouche. Les petits textes illisibles sont recréés en français ; ils ne sont
+pas présentés comme une transcription de la photo.
+
+Dés, doubles, prison, cartes conservées, achats, loyers, enchères, constructions
+uniformes, hypothèques, échanges avec consentement et faillites sont validés
+côté serveur et persistés. La vue mobile peut agrandir le plateau sans élargir la
+page. Les règles et adaptations sont détaillées dans [MEGANOPOLY.md](docs/MEGANOPOLY.md).
+
+Validation : 1 000 simulations terminées sans blocage (349 actions au maximum),
+tests des règles financières, des cartes et des transactions, reprise depuis
+PostgreSQL après redémarrage et parcours à deux navigateurs ou contre un robot
+sur ordinateur et mobile. Les huit parcours ciblés jeu/interface passent.

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { idSchema, buddySchema } from './social.js';
 import { gameTypeSchema } from '../engine/types.js';
+import { estateViewSchema } from '../games/meganopoly/view.js';
 export const roomOptionsSchema = z
   .object({
     turnSeconds: z.number().int().min(15).max(180).default(60),
@@ -61,6 +62,7 @@ export const roomPlayerSchema = z.object({
   reconnectDeadlineAt: z.string().nullable(),
 });
 export const gameViewSchema = z.object({
+  estate: estateViewSchema.optional(),
   kind: gameTypeSchema,
   players: z.array(z.string()),
   turn: z.string().nullable(),

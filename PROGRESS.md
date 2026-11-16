@@ -22,6 +22,9 @@ Suivi repris de `tools/PROGRESS.md`, sans considérer les acquis comme une nouve
 
 Branche : `autonomous-night`. Décisions : `DECISIONS.md`.
 
+- [x] Intégrer MÉGANOPOLY en français avec le plateau fourni, les cartes et les règles économiques.
+- [ ] Vérifier MÉGANOPOLY : moteur, robots, sauvegarde et parties sur ordinateur/mobile, puis publier.
+
 Vérifié le 16 novembre 2026 : 107 tests Vitest, 26 parcours Playwright complets
 et deux parcours ciblés de connexion locale/récupération après panne, 6 000 simulations. Couverture partagée : instructions
 95,41 %, branches 90,40 %, fonctions 93,71 %, lignes 96,73 %.

@@ -45,6 +45,13 @@ export const catalog: {
   { id: 'carte-frenesie', name: 'cards', description: 'cardsDesc', count: '2–8', theme: 'purple' },
   { id: 'course-ecuries', name: 'horses', description: 'horsesDesc', count: '2–4', theme: 'mint' },
   { id: 'bombe-mots', name: 'words', description: 'wordsDesc', count: '2–6', theme: 'gold' },
+  {
+    id: 'meganopoly',
+    name: 'meganopoly',
+    description: 'meganopolyDesc',
+    count: '2–6',
+    theme: 'mint',
+  },
 ];
 export function GameCards() {
   const t = useT();
@@ -62,7 +69,14 @@ export function GameCards() {
             aria-label={`${t(game.name)} — ${t(previewOnly ? 'discover' : data?.games.some((g) => g.id === game.id) ? 'play' : 'upcoming')}`}
           >
             <div className="game-cover">
-              <ReferenceArtwork art={game.id} />
+              {game.id === 'meganopoly' ? (
+                <img
+                  src="/art/meganopoly-reference.png"
+                  alt="Plateau MÉGANOPOLY : mariés, dalmatien et golden retriever"
+                />
+              ) : (
+                <ReferenceArtwork art={game.id} />
+              )}
               <span className="game-state">
                 <Clock3 size={12} />
                 {t(
@@ -216,7 +230,7 @@ export function HomePage() {
                 </h2>
                 <p>{t('gamesSub')}</p>
               </div>
-              <span className="count-chip">06</span>
+              <span className="count-chip">{String(catalog.length).padStart(2, '0')}</span>
             </div>
             <GameCards />
           </div>

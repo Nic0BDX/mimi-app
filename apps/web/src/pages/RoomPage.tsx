@@ -11,6 +11,7 @@ import { useAuth } from '../stores/auth';
 import { useSocial } from '../stores/social';
 import { ErrorMessage } from '../components/Feedback';
 import { BoardGame } from '../games/BoardGames';
+import { MeganopolyGame } from '../games/MeganopolyGame';
 import { DraughtsGame } from '../games/DraughtsGame';
 import { FrenzyGame } from '../games/FrenzyGame';
 import { HorsesGame } from '../games/HorsesGame';
@@ -174,17 +175,19 @@ export function RoomPage() {
           <h2>{t('rules')}</h2>
           <p>
             {t(
-              room.gameType === 'morpion'
-                ? 'rulesMorpion'
-                : room.gameType === 'puissance-quatre'
-                  ? 'rulesConnect'
-                  : room.gameType === 'dames'
-                    ? 'rulesCheckers'
-                    : room.gameType === 'carte-frenesie'
-                      ? 'rulesCards'
-                      : room.gameType === 'course-ecuries'
-                        ? 'rulesHorses'
-                        : 'rulesWords',
+              room.gameType === 'meganopoly'
+                ? 'rulesMeganopoly'
+                : room.gameType === 'morpion'
+                  ? 'rulesMorpion'
+                  : room.gameType === 'puissance-quatre'
+                    ? 'rulesConnect'
+                    : room.gameType === 'dames'
+                      ? 'rulesCheckers'
+                      : room.gameType === 'carte-frenesie'
+                        ? 'rulesCards'
+                        : room.gameType === 'course-ecuries'
+                          ? 'rulesHorses'
+                          : 'rulesWords',
             )}
           </p>
         </section>
@@ -393,7 +396,16 @@ export function RoomPage() {
                     {seconds !== null && <strong role="timer">{seconds}s</strong>}
                   </div>
                   {room.view &&
-                    (room.gameType === 'bombe-mots' ? (
+                    (room.gameType === 'meganopoly' ? (
+                      <MeganopolyGame
+                        view={room.view}
+                        name={name}
+                        onAction={(a) => {
+                          void action(a);
+                        }}
+                        disabled={busy || own?.control !== 'HUMAN'}
+                      />
+                    ) : room.gameType === 'bombe-mots' ? (
                       <WordsGame
                         view={room.view}
                         onAction={async (a) => Boolean(await action(a))}
