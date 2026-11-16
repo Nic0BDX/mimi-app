@@ -1,0 +1,17 @@
+{
+  "url": "https://mimi-app-seven.vercel.app",
+  "checkedAt": "2026-11-16T18:13:20.958Z",
+  "gameType": "meganopoly",
+  "originalImageHashMatches": true,
+  "tiles": 40,
+  "cards": 24,
+  "twoPlayers": true,
+  "dice": true,
+  "purchaseWhenOffered": true,
+  "consensualExchange": true,
+  "persistedAfterReload": true,
+  "botAdvanced": true,
+  "desktop": true,
+  "mobile": true,
+  "pageErrors": 0
+}

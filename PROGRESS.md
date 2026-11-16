@@ -23,11 +23,11 @@ Suivi repris de `tools/PROGRESS.md`, sans considérer les acquis comme une nouve
 Branche : `autonomous-night`. Décisions : `DECISIONS.md`.
 
 - [x] Intégrer MÉGANOPOLY en français avec le plateau fourni, les cartes et les règles économiques.
-- [ ] Vérifier MÉGANOPOLY : moteur, robots, sauvegarde et parties sur ordinateur/mobile, puis publier.
+- [x] Vérifier MÉGANOPOLY : moteur, robots, sauvegarde et parties sur ordinateur/mobile, puis publier.
 
-Vérifié le 16 novembre 2026 : 107 tests Vitest, 26 parcours Playwright complets
+Vérifié le 16 novembre 2026 : 132 tests Vitest, 26 parcours Playwright complets
 et deux parcours ciblés de connexion locale/récupération après panne, 6 000 simulations. Couverture partagée : instructions
-95,41 %, branches 90,40 %, fonctions 93,71 %, lignes 96,73 %.
+96,88 %, branches 91,26 %, fonctions 97,35 %, lignes 97,75 %.
 ESLint, formatage, typage, compilation web/PWA et démarrage du serveur compilé
 avec PostgreSQL valides. Accueils 1920×1080 et 390×844 sans débordement.
 Audio activable et persistant, navigation clavier et shell hors connexion testés.
@@ -36,10 +36,15 @@ Visuels issus de la référence : comparaison des 12 cadrages, écart moyen maxi
 Commandes standard de compilation et test du serveur compilé confirmées lors de
 la reprise, avec les autorisations natives Windows. Lanceur nuit réparé et quatre
 scénarios dédiés validés. Limites documentées dans `RAPPORT_FINAL.md`.
-Publication GitHub vérifiée sur `main`, commit fonctionnel `92e71b2`.
+Publication GitHub vérifiée sur `main`, commit fonctionnel `9f7fd46`.
 Accueil et comptes en production : https://mimi-app-seven.vercel.app.
 Inscription, connexion, déconnexion, session persistante et cookies sécurisés
 vérifiés sur ordinateur et mobile ; comptes temporaires supprimés.
 Six jeux publics vérifiés avec deux comptes réels, coups légaux, reprise de session
 et robot ; preuves dans `docs/previews/production-games-check.json`. Aucun
 débordement sur les cinq formats d’accueil contrôlés. 107 tests Vitest valides.
+MÉGANOPOLY publié et vérifié en production : image originale identique par SHA-256,
+40 cases, 24 cartes, deux joueurs, échanges consentis, reprise et robot. Comptes
+temporaires supprimés. Preuves : `docs/previews/production-meganopoly-check.json`.
+132 tests Vitest, 1 000 simulations du nouveau moteur et huit parcours ciblés
+jeu/interface réussis ; zoom, contraste et absence de débordement vérifiés.

@@ -16,6 +16,9 @@ Le rendu d’accueil est disponible sur ordinateur et mobile. Captures réelles 
 [ordinateur](docs/previews/nimimi-desktop.png) et [mobile](docs/previews/nimimi-mobile.png).
 Les sept jeux sont disponibles : Morpion+, Puissance 4+, Dames+, Carte Étoile,
 Course des Pions, Mot Mystère et [MÉGANOPOLY](docs/MEGANOPOLY.md).
+MÉGANOPOLY en production : [ordinateur](docs/previews/live-meganopoly-desktop.png),
+[mobile](docs/previews/live-meganopoly-mobile.png),
+[contrôle réel](docs/previews/production-meganopoly-check.json).
 Aucun ami ni score fictif n’est affiché.
 Les compteurs de profil viennent de PostgreSQL. Le suivi principal est
 [PROGRESS.md](PROGRESS.md), les décisions sont dans [DECISIONS.md](DECISIONS.md).

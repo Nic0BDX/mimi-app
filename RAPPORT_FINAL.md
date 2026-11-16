@@ -16,7 +16,7 @@ Six jeux sont enregistrés, créables et jouables avec le serveur autoritaire :
 Les modifications locales antérieures sont conservées. L’historique n’a pas été
 réécrit et le dépôt FORGE parent n’a pas été modifié.
 Le code vérifié est publié sur [GitHub, branche main](https://github.com/Nic0BDX/mimi-app),
-au commit fonctionnel `92e71b2`.
+au commit fonctionnel `9f7fd46`.
 
 ## Moteurs et persistance
 
@@ -47,7 +47,7 @@ de cartes et la distribution des manches suivantes aux seuls joueurs actifs.
 ## Qualité et interface
 
 - ESLint sans avertissement, Prettier et typage des trois packages vérifiés.
-- 107 tests Vitest valides, avec une vraie base PostgreSQL isolée pour les tests serveur.
+- 132 tests Vitest valides, avec une vraie base PostgreSQL isolée pour les tests serveur.
 - 26 parcours Playwright complets valides : 13 scénarios en mobile et les mêmes en bureau,
   dont six jeux, comptes, présence multi-onglets, clavier, langue, PWA et audio.
 - Couverture du code partagé : instructions **95,41 %**, branches **90,40 %**,
@@ -218,3 +218,14 @@ Validation : 1 000 simulations terminées sans blocage (349 actions au maximum),
 tests des règles financières, des cartes et des transactions, reprise depuis
 PostgreSQL après redémarrage et parcours à deux navigateurs ou contre un robot
 sur ordinateur et mobile. Les huit parcours ciblés jeu/interface passent.
+La couverture partagée reste supérieure au seuil de 90 % : 96,88 % des instructions,
+91,26 % des branches, 97,35 % des fonctions et 97,75 % des lignes.
+
+Le contrôle public de MÉGANOPOLY confirme les 40 cases, les 24 cartes consultables,
+les dés, l’achat lorsque proposé, l’échange accepté par le destinataire, la reprise
+après rechargement et le robot. L’image téléchargée correspond au SHA-256 de
+l’original fourni. Aucune erreur JavaScript ni débordement horizontal ; les deux
+comptes temporaires sont supprimés après le contrôle.
+Preuves : [résultat](docs/previews/production-meganopoly-check.json),
+[ordinateur](docs/previews/live-meganopoly-desktop.png),
+[mobile](docs/previews/live-meganopoly-mobile.png).
