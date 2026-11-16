@@ -158,12 +158,14 @@ sécurisés. Le mode console expose les liens de récupération uniquement en de
 
 ### Frontend Vercel/Netlify
 
-Le déploiement Vercel courant présente le rendu visuel avec `build:preview` (mode
-`showcase`) : aucun appel API/WebSocket et aucune création de compte n’y sont
-effectués. L’application locale conserve son fonctionnement complet. Pour activer
-le serveur déployé plus tard, repasser `buildCommand` sur `pnpm --filter @mimi/web build`
-et configurer les origines/API ci-dessous. Vérification de l’aperçu public :
-`node tools/preview-smoke.mjs https://URL-DU-DEPLOIEMENT`.
+Le déploiement public [NIMIMI](https://mimi-app-seven.vercel.app) propose l’accueil,
+l’inscription, la connexion et les sessions persistantes avec PostgreSQL Neon.
+La compilation `node tools/vercel-build.mjs` prépare le frontend et l’API de comptes.
+Les parcours réels sur ordinateur et mobile sont consignés dans
+[production-check.json](docs/previews/production-check.json).
+Ce déploiement utilise `VITE_ACCOUNTS_ONLY=true` : les jeux multijoueurs nécessitent
+encore un serveur persistant. La récupération par e-mail reste désactivée en
+attendant la configuration SMTP.
 
 Racine du projet : ce monorepo `mimi-app`, commande de build
 `pnpm --filter @mimi/web build`, sortie `apps/web/dist`.

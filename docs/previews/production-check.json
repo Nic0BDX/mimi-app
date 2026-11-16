@@ -1,0 +1,25 @@
+{
+  "url": "https://mimi-app-seven.vercel.app",
+  "checkedAt": "2026-11-16T16:31:29.146Z",
+  "database": "persistent PostgreSQL",
+  "results": [
+    {
+      "viewport": "desktop",
+      "signup": true,
+      "login": true,
+      "reloadSession": true,
+      "secureCookie": true,
+      "logout": true,
+      "pageErrors": 0
+    },
+    {
+      "viewport": "mobile",
+      "signup": true,
+      "login": true,
+      "reloadSession": true,
+      "secureCookie": true,
+      "logout": true,
+      "pageErrors": 0
+    }
+  ]
+}

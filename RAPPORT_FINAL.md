@@ -15,8 +15,8 @@ Six jeux sont enregistrés, créables et jouables avec le serveur autoritaire :
 
 Les modifications locales antérieures sont conservées. L’historique n’a pas été
 réécrit et le dépôt FORGE parent n’a pas été modifié.
-Le code vérifié est publié sur [GitHub, branche autonomous-night](https://github.com/Nic0BDX/mimi-app/tree/autonomous-night),
-au commit fonctionnel `ca2ac82`, sans fusion dans `main`.
+Le code vérifié est publié sur [GitHub, branche main](https://github.com/Nic0BDX/mimi-app),
+au commit fonctionnel `a1f368f`.
 
 ## Moteurs et persistance
 
@@ -47,7 +47,7 @@ de cartes et la distribution des manches suivantes aux seuls joueurs actifs.
 ## Qualité et interface
 
 - ESLint sans avertissement, Prettier et typage des trois packages vérifiés.
-- 98 tests Vitest valides, avec une vraie base PostgreSQL isolée pour les tests serveur.
+- 100 tests Vitest valides, avec une vraie base PostgreSQL isolée pour les tests serveur.
 - 26 parcours Playwright complets valides : 13 scénarios en mobile et les mêmes en bureau,
   dont six jeux, comptes, présence multi-onglets, clavier, langue, PWA et audio.
 - Couverture du code partagé : instructions **95,41 %**, branches **90,40 %**,
@@ -129,7 +129,7 @@ Installation et lancement : voir [README.md](README.md). Les tests emploient des
 schémas aléatoires dans une base dont le nom finit par `_test` ; ils ne réinitialisent
 pas la base de développement. La CI exécute maintenant couverture et simulations.
 Les contrôles GitHub Actions ont été déclenchés par la publication de la branche ;
-leur résultat distant est consultable dans [Actions](https://github.com/Nic0BDX/mimi-app/actions?query=branch%3Aautonomous-night).
+leur résultat distant est consultable dans [Actions](https://github.com/Nic0BDX/mimi-app/actions?query=branch%3Amain).
 
 Dans ce bac à sable Windows, pnpm est absent du PATH et esbuild ne peut pas lire
 les répertoires parents de l’espace autorisé. La première vérification utilisait
@@ -162,8 +162,26 @@ Le dictionnaire reste français en interface anglaise.
 
 Le fonctionnement multijoueur nécessite Node persistant, PostgreSQL et une seule
 instance serveur. La présence n’est pas synchronisée entre instances. En production,
-HTTPS, SMTP et une clé `GAME_ENCRYPTION_KEY` stable sont requis. Le mode Vercel
+HTTPS et une clé `GAME_ENCRYPTION_KEY` stable sont requis ; SMTP est nécessaire
+pour la récupération par e-mail. Le mode Vercel
 `showcase` est un aperçu graphique et ne fournit pas le serveur multijoueur.
 Aucun hébergement complet, envoi SMTP public ou essai sur appareil physique
 n’est revendiqué. Les textes légaux et la politique de conservation doivent être
 adaptés par l’éditeur avant une ouverture publique.
+
+## Connexion publique vérifiée le 16 novembre 2026
+
+[NIMIMI](https://mimi-app-seven.vercel.app) fournit désormais les comptes réels,
+avec PostgreSQL Neon gratuit en région Francfort et une API de comptes Vercel.
+Les routes de santé et de session répondent HTTP 200. Inscription, déconnexion,
+reconnexion et session après rechargement passent sur ordinateur et mobile ;
+les cookies sont Secure, HttpOnly et SameSite=Lax. Les deux comptes de test ont
+été supprimés après vérification, sans erreur JavaScript observée.
+
+Preuves : [résultats](docs/previews/production-check.json),
+[accueil ordinateur](docs/previews/production-home-desktop.png),
+[accueil mobile](docs/previews/production-home-mobile.png),
+[connexion ordinateur](docs/previews/production-login-desktop.png),
+[connexion mobile](docs/previews/production-login-mobile.png).
+Le mode public reste limité aux comptes : le multijoueur et la récupération
+par e-mail nécessitent respectivement un serveur persistant et SMTP.

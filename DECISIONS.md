@@ -9,7 +9,7 @@
 - Accueil mobile : rendre le bouton de déconnexion existant accessible après connexion ; il était masqué par la feuille de style générale.
 
 - Reprise finale : remplacer les illustrations approximatives par des fenêtres SVG sur les visuels fournis, avec une interface HTML interactive ; mesurer la fidélité des illustrations et la stabilité des écrans séparément des données réelles et de la perspective photographique.
-- Publier uniquement le dépôt `mimi-app` sur sa branche `autonomous-night`, sans fusion forcée ni modification du dépôt FORGE parent ; vérifier les contrôles GitHub après publication.
+- Publier uniquement le dépôt `mimi-app` sur `main`, conformément à la demande de mise à jour GitHub, sans publication forcée ni modification du dépôt FORGE parent.
 
 - Carte Étoile sur mobile : contraindre la colonne de jeu avec `minmax(0, 1fr)` et `min-width: 0` ; le défilement horizontal appartient à la main, jamais à toute la page. Vérification avant tout clic dans le parcours à deux joueurs.
 

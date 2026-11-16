@@ -15,11 +15,11 @@ Suivi repris de `tools/PROGRESS.md`, sans considérer les acquis comme une nouve
 - [x] Simulations de tous les moteurs, couverture et parcours critiques à deux utilisateurs.
 - [x] Documentation de lancement, architecture et RAPPORT_FINAL.md.
 - [x] Publication des modifications vérifiées sur la branche GitHub du projet.
-- [ ] API de connexion publique sur Vercel, base persistante et test navigateur en production.
+- [x] API de connexion publique sur Vercel, base persistante et test navigateur en production.
 
 Branche : `autonomous-night`. Décisions : `DECISIONS.md`.
 
-Vérifié le 16 novembre 2026 : 98 tests Vitest, 26 parcours Playwright complets
+Vérifié le 16 novembre 2026 : 100 tests Vitest, 26 parcours Playwright complets
 et deux parcours ciblés de connexion locale/récupération après panne, 6 000 simulations. Couverture partagée : instructions
 95,41 %, branches 90,40 %, fonctions 93,71 %, lignes 96,73 %.
 ESLint, formatage, typage, compilation web/PWA et démarrage du serveur compilé
@@ -30,5 +30,7 @@ Visuels issus de la référence : comparaison des 12 cadrages, écart moyen maxi
 Commandes standard de compilation et test du serveur compilé confirmées lors de
 la reprise, avec les autorisations natives Windows. Lanceur nuit réparé et quatre
 scénarios dédiés validés. Limites documentées dans `RAPPORT_FINAL.md`.
-Publication GitHub vérifiée : branche `autonomous-night`, commit fonctionnel
-`ca2ac82`. Aucun hébergement public complet certifié.
+Publication GitHub vérifiée sur `main`, commit fonctionnel `a1f368f`.
+Accueil et comptes en production : https://mimi-app-seven.vercel.app.
+Inscription, connexion, déconnexion, session persistante et cookies sécurisés
+vérifiés sur ordinateur et mobile ; comptes temporaires supprimés.
