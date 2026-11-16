@@ -4,7 +4,10 @@
   "outputDirectory": "apps/web/dist",
   "regions": ["fra1"],
   "functions": { "api/**/*.ts": { "maxDuration": 30 } },
-  "rewrites": [{ "source": "/((?!api/|socket.io/).*)", "destination": "/index.html" }],
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "/api/index" },
+    { "source": "/((?!api/|socket.io/).*)", "destination": "/index.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
