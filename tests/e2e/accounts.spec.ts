@@ -2,15 +2,45 @@ import { test, expect, type Page } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
 import fs from 'node:fs/promises';
 
-async function register(page: Page, email: string, username: string) {
-  await page.goto('/register');
+async function register(page: Page, email: string, username: string, base = '') {
+  await page.goto(`${base}/register`);
   await page.getByLabel('Pseudo', { exact: true }).fill(username);
   await page.getByLabel('Adresse e-mail').fill(email);
   await page.getByLabel('Mot de passe', { exact: true }).fill('Password-123');
   await page.getByRole('radio', { name: 'Avatar 2', exact: true }).check();
   await page.getByRole('button', { name: 'Créer mon compte' }).click();
-  await expect(page).toHaveURL('/');
+  await expect(page).toHaveURL(`${base}/`);
 }
+test('loopback sign-in recovers after an unavailable API without losing the form', async ({
+  page,
+}) => {
+  const base = 'http://127.0.0.1:5173',
+    username = `Alias_${randomUUID().slice(0, 6)}`;
+  const email = `${username}@example.test`;
+  await register(page, email, username, base);
+  await page.getByRole('button', { name: 'Se déconnecter', exact: true }).click();
+  await page.goto(`${base}/login`);
+  await page.getByLabel('Adresse e-mail').fill(email);
+  await page.getByLabel('Mot de passe', { exact: true }).fill('Password-123');
+  await page.route('**/api/auth/session', (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'text/html',
+      body: '<html>Unavailable API</html>',
+    }),
+  );
+  const submit = page.getByRole('button', { name: 'Se connecter', exact: true });
+  await submit.click();
+  await expect(page.getByRole('alert')).toContainText('Le service est indisponible.');
+  await expect(submit).toBeEnabled();
+  await expect(page.getByLabel('Adresse e-mail')).toHaveValue(email);
+  await page.unroute('**/api/auth/session');
+  await submit.click();
+  await expect(page).toHaveURL(`${base}/`);
+  await page.reload();
+  await expect(page.locator('.user-card strong')).toHaveText(username);
+});
+
 test('two isolated browsers: registration, profile update, durable sessions and actual deletion', async ({
   page,
   browser,
@@ -29,7 +59,7 @@ test('two isolated browsers: registration, profile update, durable sessions and 
     await page
       .locator('.page-heading p')
       .evaluate((element) => getComputedStyle(element).fontFamily),
-  ).toContain('Trebuchet');
+  ).toContain('Nunito');
   await expect(page.locator('.top-avatar img')).toHaveAttribute('src', '/avatars/fox.svg');
   await page.goto('/settings');
   await page.getByLabel('Pseudo', { exact: true }).fill(`Luna_${id}`);
@@ -115,7 +145,9 @@ test('password recovery, logout/login, language persistence and offline shell', 
   await expect(page).toHaveURL('/');
   await page.getByRole('button', { name: 'Changer de langue' }).click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-  await expect(page.getByRole('heading', { name: 'What shall we play tonight?' })).toBeVisible();
+  await expect(page.locator('h1:visible')).toHaveText(
+    /What shall we play tonight\?|Play anywhere,\s*with your friends!/,
+  );
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await page.evaluate(() => navigator.serviceWorker.ready);
@@ -123,7 +155,9 @@ test('password recovery, logout/login, language persistence and offline shell', 
   await context.setOffline(true);
   await page.reload();
   await expect(page.getByRole('status')).toContainText('You are offline');
-  await expect(page.getByRole('heading', { name: 'What shall we play tonight?' })).toBeVisible();
+  await expect(page.locator('h1:visible')).toHaveText(
+    /What shall we play tonight\?|Play anywhere,\s*with your friends!/,
+  );
   expect(errors).toEqual([]);
   await context.setOffline(false);
 });

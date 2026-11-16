@@ -1,0 +1,20 @@
+.preview-mobile-note {
+  display: none;
+}
+@media (max-width: 760px) {
+  .preview-mobile-note {
+    display: block;
+    padding: 8px 18px;
+    font-size: 0.67rem;
+    color: #cfbce8;
+    text-align: center;
+    border-bottom: 1px solid #b98ee522;
+    background: #34264e55;
+  }
+}
+.auth-panel > .feedback {
+  margin-bottom: 20px;
+  color: #e4d4ff;
+  border-color: #b994ed55;
+  background: #7954b51c;
+}

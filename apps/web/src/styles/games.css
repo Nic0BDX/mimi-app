@@ -23,6 +23,9 @@
   gap: 22px;
   align-items: start;
 }
+.play-layout > section {
+  min-width: 0;
+}
 .players-strip {
   display: flex;
   flex-wrap: wrap;
@@ -288,7 +291,7 @@ textarea {
 }
 @media (max-width: 1100px) {
   .play-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .chat-panel {
     position: static;

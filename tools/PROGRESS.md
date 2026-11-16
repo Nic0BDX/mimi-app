@@ -6,12 +6,17 @@
 - [x] 4a. Morpion et Puissance 4.
 - [x] 4b. Dames internationales.
 - [x] 4c. Carte Frénésie et informations cachées.
-- [ ] 4d. Course des Écuries.
-- [ ] 4e. Bombe à Mots et dictionnaire sous licence vérifiée.
+- [x] 4d. Course des Écuries.
+- [x] 4e. Bombe à Mots et dictionnaire sous licence vérifiée.
 - [ ] 5. Finitions, simulations, tests complets, documentation et publication GitHub.
 
 Autorisation : poursuivre toutes les étapes sans nouvelle validation intermédiaire.
 Projet actif : ce dépôt `mimi-app` uniquement ; ne jamais pousser le dépôt FORGE parent.
+
+Reprise du 16 novembre 2026 : le suivi principal est désormais `../PROGRESS.md`.
+Les six jeux, finitions et vérifications locales sont terminés ; la publication
+GitHub historique de l’étape 5 n’a pas été effectuée et n’est pas certifiée ici.
+Résultats détaillés : `../RAPPORT_FINAL.md`.
 Hébergement public complet : nécessite un serveur Node persistant, PostgreSQL et SMTP.
 
 Étape 2 : 7 tests d’intégration PostgreSQL et 2 parcours Playwright (mobile/bureau)

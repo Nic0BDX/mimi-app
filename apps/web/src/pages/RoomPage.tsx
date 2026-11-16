@@ -14,6 +14,7 @@ import { BoardGame } from '../games/BoardGames';
 import { DraughtsGame } from '../games/DraughtsGame';
 import { FrenzyGame } from '../games/FrenzyGame';
 import { HorsesGame } from '../games/HorsesGame';
+import { WordsGame } from '../games/WordsGame';
 import { gameName } from '../lib/catalog';
 import { GameOptions, readGameOptions } from '../components/GameOptions';
 const messagesSchema = z.object({ messages: z.array(chatMessageSchema) });
@@ -100,7 +101,7 @@ export function RoomPage() {
   }
   async function action(value: unknown) {
     if (!room) return;
-    await perform('game:action', 'action', {
+    return perform('game:action', 'action', {
       expectedVersion: room.version,
       actionId: crypto.randomUUID(),
       action: value,
@@ -392,7 +393,13 @@ export function RoomPage() {
                     {seconds !== null && <strong role="timer">{seconds}s</strong>}
                   </div>
                   {room.view &&
-                    (room.gameType === 'course-ecuries' ? (
+                    (room.gameType === 'bombe-mots' ? (
+                      <WordsGame
+                        view={room.view}
+                        onAction={async (a) => Boolean(await action(a))}
+                        disabled={busy || own?.control !== 'HUMAN'}
+                      />
+                    ) : room.gameType === 'course-ecuries' ? (
                       <HorsesGame
                         view={room.view}
                         onAction={(a) => {

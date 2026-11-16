@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Link,
   NavLink,
@@ -31,6 +31,7 @@ import { usePreferences } from '../stores/preferences';
 import { useAuth } from '../stores/auth';
 import { request, clearCsrf, ApiError } from '../lib/api';
 import { ErrorMessage } from '../components/Feedback';
+import { ReferenceArtwork } from '../components/ReferenceArtwork';
 import { HomePage, GameCards, catalog } from '../pages/HomePage';
 import { AuthPage } from '../pages/AuthPages';
 import { ProfilePage } from '../pages/ProfilePage';
@@ -46,6 +47,8 @@ import {
   RankingsPage,
 } from '../pages/MultiplayerPages';
 import { RoomPage } from '../pages/RoomPage';
+import { previewOnly } from '../lib/config';
+import { AudioAmbience } from '../components/AudioAmbience';
 
 const links = [
   { to: '/', key: 'home', icon: Home },
@@ -68,6 +71,7 @@ function Layout() {
   const [online, setOnline] = useState(navigator.onLine),
     [notifications, setNotifications] = useState(false),
     [error, setError] = useState<string | null>(null);
+  const previousPath = useRef(location.pathname);
   const {
     needRefresh: [needRefresh, setNeedRefresh],
     updateServiceWorker,
@@ -92,6 +96,8 @@ function Layout() {
     document.documentElement.lang = language;
   }, [language]);
   useEffect(() => {
+    if (previousPath.current === location.pathname) return;
+    previousPath.current = location.pathname;
     setNotifications(false);
     document.getElementById('main')?.focus();
   }, [location.pathname]);
@@ -130,15 +136,16 @@ function Layout() {
     }
   }
   return (
-    <div className="app-shell">
+    <div className={`app-shell visual-v2 ${location.pathname === '/' ? 'is-home' : ''}`}>
       <a className="skip-link" href="#main">
         {t('home')}
       </a>
       <aside className="sidebar">
-        <Link className="brand" to="/" aria-label="MIMI">
-          <img src="/icons/icon.svg" alt="" />
+        <Link className="brand" to="/" aria-label="NIMIMI">
+          <ReferenceArtwork art="logo" />
           <span>
-            MIMI<small>{t('tagline')}</small>
+            <ReferenceArtwork art="wordmark" />
+            <small>{t('tagline')}</small>
           </span>
         </Link>
         <div className="sidebar-separator" />
@@ -165,8 +172,12 @@ function Layout() {
               <ArrowRight size={16} />
             </Link>
           ) : (
-            <Link className="button secondary full" to="/login">
-              {t('login')}
+            <Link className="user-card guest-card" to="/login">
+              <img src="/avatars/fox.svg" alt="" width="44" height="44" />
+              <span>
+                <strong>{t('guestPlayer')}</strong>
+                <small>{t('joinTable')}</small>
+              </span>
               <ArrowRight size={16} />
             </Link>
           )}
@@ -179,12 +190,12 @@ function Layout() {
       <div className="workspace">
         <header className="topbar">
           <Link className="mobile-brand" to="/">
-            <img src="/icons/icon.svg" alt="" />
-            <strong>MIMI</strong>
+            <ReferenceArtwork art="logo" />
+            <strong>NIMIMI</strong>
           </Link>
           <span className="topbar-note">
             <Sparkles size={15} />
-            {t('tagline')}
+            {t(previewOnly ? 'previewNotice' : 'tagline')}
           </span>
           <div className="topbar-actions">
             <button
@@ -243,6 +254,7 @@ function Layout() {
             )}
           </div>
         </header>
+        {previewOnly && <div className="preview-mobile-note">{t('previewNotice')}</div>}
         {!online && (
           <div role="status" className="network-banner">
             <WifiOff size={18} />
@@ -278,6 +290,7 @@ function Layout() {
           ) : (
             <Outlet />
           )}
+          <AudioAmbience />
         </main>
         <footer className="mobile-footer">
           <Link to="/legal">{t('legal')}</Link>
@@ -357,7 +370,7 @@ function GameInfo() {
       <span className="game-state">
         {game.count} {t('players')} · {t('upcoming')}
       </span>
-      <p>{t('gamesNotReady')}</p>
+      <p>{t(previewOnly ? 'previewNotice' : 'gamesNotReady')}</p>
       <Link to="/games" className="button secondary">
         {t('games')}
         <ArrowRight size={16} />

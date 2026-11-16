@@ -4,7 +4,8 @@ import { isolatedDatabase } from './database.js';
 import { GamesService } from '../src/modules/games/service.js';
 import { FriendsService } from '../src/modules/friends/service.js';
 import { GameRandom, encryptSeed } from '../src/services/game-rng.js';
-import type { Room } from '@mimi/shared';
+import type { GameType, Room } from '@mimi/shared';
+import { wordsFor } from '../../../packages/shared/src/games/bombe-mots/dictionary.js';
 let database: Awaited<ReturnType<typeof isolatedDatabase>>, games: GamesService;
 const key = Buffer.alloc(32, 7),
   events: { id: string; event: string }[] = [];
@@ -26,7 +27,7 @@ async function user() {
     },
   });
 }
-async function pair(type: 'morpion' | 'puissance-quatre' = 'morpion') {
+async function pair(type: GameType = 'morpion') {
   const a = await user(),
     b = await user();
   let room = await games.create(a.id, {
@@ -54,6 +55,30 @@ afterAll(async () => {
   await database?.close();
 });
 describe('persisted multiplayer infrastructure', () => {
+  it('persists dictionary validation and processes word deadlines once after service restart', async () => {
+    const { a, b, room } = await pair('bombe-mots');
+    expect(new Date(room.turnDeadlineAt!).getTime() - Date.now()).toBeGreaterThan(13_000);
+    await expect(move(room, { type: 'word', word: 'zzzzzzzz' })).rejects.toMatchObject({
+      code: 'WORD_UNKNOWN',
+    });
+    expect((await games.view(a.id, room.id)).version).toBe(room.version);
+    const word = wordsFor(room.view!.sequence!)[0]!;
+    const next = await move(room, { type: 'word', word });
+    const restored = new GamesService(database.db, hub, key);
+    expect((await restored.view(b.id, room.id)).view?.usedWords).toContain(word);
+    const before = next.view!.lives!;
+    await database.db.game.update({
+      where: { id: room.id },
+      data: { turnDeadlineAt: new Date(Date.now() - 1000) },
+    });
+    await restored.tick();
+    const expired = await restored.view(a.id, room.id);
+    expect(expired.view?.lives).toEqual([before[0], before[1]! - 1]);
+    expect(expired.version).toBe(next.version + 1);
+    await restored.tick();
+    expect((await restored.view(b.id, room.id)).version).toBe(expired.version);
+    restored.stop();
+  });
   it('enforces private access, capacity, readiness, host rights and no impersonation', async () => {
     const a = await user(),
       b = await user(),

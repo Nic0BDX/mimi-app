@@ -77,3 +77,43 @@ test('solo bot game uses the server engine and remains unranked', async ({ page 
   await expect.poll(async () => page.locator('.disc.piece-2').count()).toBe(1);
   await expect(page.getByText('À toi de jouer !', { exact: true })).toBeVisible();
 });
+
+test('two players finish Puissance 4 and retain the result after reconnecting', async ({
+  page,
+  browser,
+}, info) => {
+  const id = randomUUID().slice(0, 6);
+  await register(page, `ConnectA_${id}`);
+  const context = await browser.newContext({ baseURL: 'http://localhost:5173' });
+  try {
+    const other = await context.newPage();
+    await register(other, `ConnectB_${id}`);
+    await page.goto('/games/new?type=puissance-quatre');
+    await page.getByRole('button', { name: 'Créer un salon', exact: true }).click();
+    const code = await page.locator('.room-code strong').innerText();
+    await other.goto('/games/online');
+    await other.getByLabel('Code du salon').fill(code);
+    await other.getByRole('button', { name: 'Rejoindre', exact: true }).click();
+    await page.getByRole('button', { name: 'Prêt', exact: true }).click();
+    await other.getByRole('button', { name: 'Prêt', exact: true }).click();
+    await page.getByRole('button', { name: 'Lancer la partie' }).click();
+    for (let turn = 0; turn < 7; turn++) {
+      const active = turn % 2 === 0 ? page : other;
+      await active.getByRole('button', { name: `Colonne ${(turn % 2) + 1}`, exact: true }).click();
+      if (turn < 6)
+        await expect(page.locator('.disc.piece-1, .disc.piece-2')).toHaveCount(turn + 1);
+    }
+    await expect(other.getByRole('heading', { name: 'Résultats' })).toBeVisible();
+    await other.reload();
+    await expect(other.locator('.result-row').first()).toContainText(`ConnectA_${id}`);
+    await page.screenshot({
+      path: `test-results/connect-${info.project.name}.png`,
+      fullPage: true,
+    });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+      true,
+    );
+  } finally {
+    await context.close();
+  }
+});

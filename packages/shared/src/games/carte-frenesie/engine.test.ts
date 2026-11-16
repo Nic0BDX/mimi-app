@@ -245,4 +245,39 @@ describe('Carte Frénésie', () => {
     expect(carteFrenesie.getLegalActions(s, '0')).toEqual([]);
     expect(carteFrenesie.onTimeout(s, '0')).toBeNull();
   });
+  it('returns forfeited hands to the deck and clears pending challenges and announcements', () => {
+    let s = fixture([['*wild4', 'A1'], ['B2'], ['C3']], 'A5', { challengeWildFour: true });
+    s = play(s, put(s, 0, 'B'));
+    const count = s.deck.length + s.hands[0]!.length;
+    const next = carteFrenesie.forfeit(s, '0', rng) as FrenzyState;
+    expect(next.hands[0]).toEqual([]);
+    expect(next.deck).toHaveLength(count);
+    expect(next.challenge).toBeNull();
+    expect(next.winnerPending).toBeNull();
+    expect(next.turn).toBe(1);
+    const announced = fixture(
+      [['A1'], ['B2'], ['C3']],
+      'A5',
+      {},
+      {
+        lastCardPlayer: '0',
+        announcedSeat: 0,
+        pendingDraw: 2,
+      },
+    );
+    const forfeited = carteFrenesie.forfeit(announced, '0', rng) as FrenzyState;
+    expect(forfeited.lastCardPlayer).toBeNull();
+    expect(forfeited.announcedSeat).toBeNull();
+    expect(forfeited.pendingDraw).toBe(0);
+    expect(forfeited.turn).toBe(1);
+    expect(announced.hands[0]).toHaveLength(1);
+  });
+  it('does not deal new cards to forfeited players between scoring rounds', () => {
+    const s = fixture([['A1'], ['B9'], []], 'A5', { pointsMode: true }, { forfeited: ['2'] });
+    const next = play(s, put(s));
+    expect(next.round).toBe(2);
+    expect(next.hands[2]).toEqual([]);
+    expect(next.turn).not.toBe(2);
+    expect(next.forfeited).toEqual(['2']);
+  });
 });

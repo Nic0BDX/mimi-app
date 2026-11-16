@@ -1,6 +1,9 @@
 import { defineConfig } from '@playwright/test';
 export default defineConfig({
   testDir: './tests/e2e',
+  globalTeardown: './tools/preserve-previews.mjs',
+  snapshotPathTemplate: '{testDir}/__screenshots__/{projectName}/{arg}{ext}',
+  expect: { toHaveScreenshot: { maxDiffPixelRatio: 0.01, animations: 'disabled' } },
   fullyParallel: false,
   workers: 1,
   timeout: 60_000,

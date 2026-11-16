@@ -8,6 +8,7 @@ import { useRemote } from '../lib/useRemote';
 import { request, ApiError } from '../lib/api';
 import { ErrorMessage } from '../components/Feedback';
 import { catalogSchema, gameName } from '../lib/catalog';
+import { GameOptions, readGameOptions } from '../components/GameOptions';
 const publicSchema = z.object({
   rooms: z.array(
     z.object({
@@ -174,7 +175,7 @@ export function CreateRoomPage() {
             options: {
               turnSeconds: Number(form.get('turnSeconds')),
               disconnect: String(form.get('disconnect')),
-              gameOptions: selected?.defaultOptions ?? {},
+              gameOptions: readGameOptions(form, selected?.defaultOptions ?? {}),
             },
           }),
         }),
@@ -242,6 +243,7 @@ export function CreateRoomPage() {
           <span>{t('privateRoom')}</span>
           <input name="private" type="checkbox" defaultChecked />
         </label>
+        {selected && <GameOptions key={type} values={selected.defaultOptions} />}
         <ErrorMessage code={error ?? available.error} />
         <button className="button primary" disabled={busy || !selected}>
           {t(busy ? 'loading' : 'createRoom')}

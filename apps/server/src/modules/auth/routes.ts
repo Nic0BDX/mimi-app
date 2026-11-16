@@ -163,10 +163,15 @@ export async function registerAccountRoutes(
       const user = await db.user.findUniqueOrThrow({ where: { id: session.userId } });
       if (!(await argon2.verify(user.passwordHash, input.password)))
         throw new ApiError(401, 'INVALID_CREDENTIALS');
-      // No user-authored game actions exist in step 1. Future engines must redact journals
-      // before enabling personal text in GameEvent.action (documented in ARCHITECTURE).
       await db.$transaction(async (tx) => {
         await tx.chatMessage.deleteMany({ where: { userId: user.id } });
+        await tx.notification.deleteMany({
+          where: { payload: { path: ['actor', 'id'], equals: user.id } },
+        });
+        await tx.gameEvent.updateMany({
+          where: { playerId: user.id },
+          data: { action: { type: 'redacted' } },
+        });
         await tx.user.delete({ where: { id: user.id } });
       });
       clearSession(reply, env);

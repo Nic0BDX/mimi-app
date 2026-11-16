@@ -9,7 +9,7 @@ export function createMailer(env: Environment): Mailer {
     return {
       async sendPasswordReset(email, url) {
         // Explicit development-only delivery channel: never enabled in production.
-        console.info('[MIMI DEV MAIL]', JSON.stringify({ to: email, resetUrl: url }));
+        console.info('[NIMIMI DEV MAIL]', JSON.stringify({ to: email, resetUrl: url }));
       },
     };
   }
@@ -25,8 +25,8 @@ export function createMailer(env: Environment): Mailer {
       await transport.sendMail({
         from: env.MAIL_FROM,
         to: email,
-        subject: 'MIMI — Réinitialiser votre mot de passe',
-        text: `Un changement de mot de passe a été demandé pour votre compte MIMI.\n\n${url}\n\nCe lien expire dans 30 minutes. Si vous n’êtes pas à l’origine de cette demande, ignorez ce message.`,
+        subject: 'NIMIMI — Réinitialiser votre mot de passe',
+        text: `Un changement de mot de passe a été demandé pour votre compte NIMIMI.\n\n${url}\n\nCe lien expire dans 30 minutes. Si vous n’êtes pas à l’origine de cette demande, ignorez ce message.`,
       });
     },
   };

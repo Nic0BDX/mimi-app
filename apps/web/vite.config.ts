@@ -3,7 +3,12 @@ import react from '@vitejs/plugin-react';
 import tailwind from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  define: {
+    'import.meta.env.VITE_PREVIEW_ONLY': JSON.stringify(
+      mode === 'showcase' || process.env.VITE_PREVIEW_ONLY === 'true' ? 'true' : 'false',
+    ),
+  },
   plugins: [
     react(),
     tailwind(),
@@ -11,8 +16,8 @@ export default defineConfig({
       registerType: 'prompt',
       includeAssets: ['icons/*.png', 'icons/*.svg', 'avatars/*.svg', 'illustrations/*.svg'],
       manifest: {
-        name: 'MIMI — À toi de jouer',
-        short_name: 'MIMI',
+        name: 'NIMIMI — À toi de jouer',
+        short_name: 'NIMIMI',
         description: 'Un petit jeu, un grand moment.',
         lang: 'fr',
         start_url: '/',
@@ -32,7 +37,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,webp,woff2}'],
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api(?:\/|$)/, /^\/socket\.io(?:\/|$)/],
         runtimeCaching: [],
@@ -48,4 +53,4 @@ export default defineConfig({
     },
   },
   preview: { host: '127.0.0.1', port: 4173, strictPort: true },
-});
+}));

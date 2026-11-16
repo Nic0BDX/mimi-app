@@ -5,10 +5,17 @@ import { languageSchema, type Language } from '@mimi/shared';
 const schema = z.object({
   language: languageSchema,
   sound: z.boolean(),
+  music: z.boolean().default(false),
   volume: z.number().min(0).max(1),
   vibration: z.boolean(),
 });
-const defaults = { language: 'fr' as Language, sound: false, volume: 0.5, vibration: false };
+const defaults = {
+  language: 'fr' as Language,
+  sound: false,
+  music: false,
+  volume: 0.5,
+  vibration: false,
+};
 function read() {
   try {
     return schema.parse(JSON.parse(localStorage.getItem('mimi_preferences') ?? 'null'));

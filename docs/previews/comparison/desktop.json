@@ -1,0 +1,37 @@
+{
+  "source": "apps/web/public/art/nimimi-reference.png",
+  "scope": "Artwork only; excludes photograph perspective, surrounding devices, UI text and user data.",
+  "maxMeanError": 8,
+  "results": [
+    {
+      "game": "morpion",
+      "meanError": 4.4828972291969515,
+      "normalizedError": 0.017579989134105693
+    },
+    {
+      "game": "puissance-quatre",
+      "meanError": 4.033450307813126,
+      "normalizedError": 0.015817452187502457
+    },
+    {
+      "game": "dames",
+      "meanError": 3.0026045108145016,
+      "normalizedError": 0.011774919650252947
+    },
+    {
+      "game": "carte-frenesie",
+      "meanError": 2.9607849575343663,
+      "normalizedError": 0.011610921402095555
+    },
+    {
+      "game": "course-ecuries",
+      "meanError": 3.0917138771544903,
+      "normalizedError": 0.012124368145703883
+    },
+    {
+      "game": "bombe-mots",
+      "meanError": 3.5437461693371857,
+      "normalizedError": 0.013897043801322296
+    }
+  ]
+}

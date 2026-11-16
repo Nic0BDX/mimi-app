@@ -9,3 +9,7 @@ test-results/
 .local/
 *.log
 *.tsbuildinfo
+.vercel/
+
+.vercel
+.env*

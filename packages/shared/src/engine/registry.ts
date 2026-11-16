@@ -3,6 +3,7 @@ import { puissanceQuatre } from '../games/puissance-quatre/engine.js';
 import { dames } from '../games/dames/engine.js';
 import { carteFrenesie } from '../games/carte-frenesie/engine.js';
 import { courseEcuries } from '../games/course-ecuries/engine.js';
+import { bombeMots } from '../games/bombe-mots/engine.js';
 import type { RegisteredEngine } from './types.js';
 export const engines: Record<string, RegisteredEngine> = {
   morpion,
@@ -10,6 +11,7 @@ export const engines: Record<string, RegisteredEngine> = {
   dames,
   'carte-frenesie': carteFrenesie,
   'course-ecuries': courseEcuries,
+  'bombe-mots': bombeMots,
 };
 export function getEngine(id: string): RegisteredEngine {
   const engine = engines[id];

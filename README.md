@@ -1,23 +1,24 @@
-# MIMI
+# NIMIMI
 
 Plateforme de jeux de société multijoueurs. React/TypeScript/Vite côté navigateur,
 Fastify/Socket.IO côté serveur, PostgreSQL/Prisma, contrats Zod partagés.
-Identité et dessins SVG originaux, sans assets commerciaux.
+Identité NIMIMI, illustrations locales et avatars SVG originaux.
 
 ## État du projet
 
 - [x] Étape 1 : fondations, inscription/connexion, récupération, profil et suppression.
 - [x] Étape 2 : amis, blocages, notifications et présence réels (mono-instance).
 - [x] Étape 3 : salons, infrastructure des parties, Morpion puis Puissance 4.
-- [ ] Étape 4 : moteurs additionnels, un jeu à la fois, règles et simulations.
-- [ ] Étape 5 : finitions multijoueurs, classement, audio et déploiement complet.
+- [x] Étape 4 : six moteurs, règles et 1 000 simulations par jeu.
+- [x] Étape 5 locale : interfaces, audio, PWA, tests et documentation vérifiés.
 
 Le rendu d’accueil est disponible sur ordinateur et mobile. Captures réelles :
-[ordinateur](docs/previews/mimi-desktop.png) et [mobile](docs/previews/mimi-mobile.png).
-Les jeux non disponibles restent explicitement marqués « Bientôt » ; aucun ami
-ni score fictif n’est affiché. Les compteurs de profil viennent de PostgreSQL.
-La suite des jeux est mise de côté à la demande de l’utilisateur : avancement et
-vérifications restantes dans [tools/PROGRESS.md](tools/PROGRESS.md).
+[ordinateur](docs/previews/nimimi-desktop.png) et [mobile](docs/previews/nimimi-mobile.png).
+Les six jeux sont disponibles : Morpion+, Puissance 4+, Dames+, Carte Étoile,
+Course des Pions et Mot Mystère. Aucun ami ni score fictif n’est affiché.
+Les compteurs de profil viennent de PostgreSQL. Le suivi principal est
+[PROGRESS.md](PROGRESS.md), les décisions sont dans [DECISIONS.md](DECISIONS.md).
+Résultats et limites : [RAPPORT_FINAL.md](RAPPORT_FINAL.md).
 
 ## Installation
 
@@ -50,7 +51,8 @@ conserve les bases entre deux lancements. Dans un deuxième terminal, configurer
 `DATABASE_URL` dans `.env` avec le **port 5433** et la base **mimi**, puis lancer
 `pnpm db:migrate` et `pnpm dev`. La base `mimi_test` est réservée aux tests.
 Ne pas lancer simultanément ce serveur et le service Docker `postgres-test`.
-Redis n’est pas utilisé à l’étape 1 ; il sera connecté pour la présence à l’étape 2.
+La présence utilise la mémoire du serveur Node : exploiter une seule instance.
+Redis n’est pas requis et la synchronisation horizontale n’est pas implémentée.
 
 ## Vérifications
 
@@ -58,6 +60,8 @@ Redis n’est pas utilisé à l’étape 1 ; il sera connecté pour la présence
 pnpm lint
 pnpm typecheck
 pnpm test
+pnpm test:coverage
+pnpm simulate
 pnpm build
 pnpm test:runtime
 pnpm exec playwright install chromium
@@ -72,8 +76,18 @@ Les tests refusent une base sans suffixe `_test`.
 Playwright utilise la compilation de production et deux formats : 390×844 et
 1920×1080, ce dernier avec réduction des animations. Si Chromium est déjà installé,
 définir `PLAYWRIGHT_BROWSER` avec le chemin du navigateur. Les captures sont dans
-`test-results/`. Les tests E2E démarrent leurs propres serveurs : arrêter `pnpm dev`
+`test-results/`, avec une copie durable dans `docs/previews/screens/`.
+Les tests E2E démarrent leurs propres serveurs : arrêter `pnpm dev`
 avant de les lancer pour libérer les ports 3001 et 5173.
+
+## Agent de nuit sous Windows
+
+Pour reprendre automatiquement sous Windows : `powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/nuit.ps1`.
+Le lanceur conserve les diagnostics, publie son activité dans `.local/nuit/status.txt`
+et s’arrête lorsque le suivi et le rapport final sont terminés. Il limite les
+reprises à 30 et empêche deux exécutions simultanées. Les diagnostics stderr seuls
+ne provoquent plus d’arrêt ; un code de sortie non nul reste un échec.
+Vérification du lanceur sans appel à Codex : `powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/test-nuit.ps1`.
 
 ## Test manuel avec deux navigateurs
 
@@ -91,18 +105,19 @@ avant de les lancer pour libérer les ports 3001 et 5173.
 8. Basculer FR/EN, recharger ; essayer l’affichage hors connexion après une première
    visite. Le shell reste disponible, les opérations de compte exigent Internet.
 
-Les demandes d’amis et parties à deux seront testables aux étapes 2 et 3.
+Les demandes d’amis, salons privés par code, chat, six jeux, reconnexion et
+revanche fonctionnent avec deux comptes. Les bots sont disponibles dans les salons.
 
 ## Architecture
 
 ```text
 Navigateur React ── HTTPS + cookie httpOnly + CSRF ── Fastify
        │                                              │
-       └── Socket.IO authentifié [handlers étape 2+] ──┤
+       └── Socket.IO authentifié ──────────────────────┤
                                                       ├── PostgreSQL : source durable
-                                                      └── Redis : présence/rate limit [étape 2]
+                                                      └── Présence en mémoire (mono-instance)
 
-packages/shared : schémas Zod + types + moteurs purs [étapes 3/4]
+packages/shared : schémas Zod + types + six moteurs purs
 ```
 
 Voir [ARCHITECTURE.md](ARCHITECTURE.md) pour les flux et garanties.
@@ -110,18 +125,19 @@ Voir [ARCHITECTURE.md](ARCHITECTURE.md) pour les flux et garanties.
 ## Ajouter un jeu — contrat prévu
 
 Créer `packages/shared/src/games/<id>` avec moteur pur, schémas d’actions/options,
-projection privée, bot, règles et tests, puis enregistrer le module. Créer son
-composant dans `apps/web/src/games/<id>`. L’interface GameEngine et le registre
-seront implémentés à l’étape 3 ; aucun moteur vide n’est fourni pour simuler un jeu.
-Le futur `pnpm simulate <jeu>` exécutera 1 000 parties seedées avec limite de coups
-et contrôle des invariants.
+projection privée, bot, règles et tests, puis enregistrer le module dans
+`packages/shared/src/engine/registry.ts` et ajouter sa vue dans `apps/web/src/games`.
+`pnpm simulate <jeu>` exécute 1 000 parties déterministes avec limite de coups,
+validation des états, contrôle de non-mutation et projections des joueurs.
+Le dictionnaire français de Mot Mystère est livré avec sa licence MIT dans
+`packages/shared/src/games/bombe-mots/WORDS-LICENSE`.
 
 ## Déploiement
 
 ### Serveur Node et PostgreSQL
 
 Utiliser un service Node persistant (Railway/Fly.io ou équivalent), Node 22 LTS,
-PostgreSQL managé et, à partir de l’étape 2, Redis managé. Depuis la racine :
+PostgreSQL managé, sur une seule instance Node. Depuis la racine :
 
 ```sh
 pnpm install --frozen-lockfile
@@ -134,11 +150,20 @@ pnpm --filter @mimi/server start
 Variables obligatoires en production : `NODE_ENV=production`, `HOST=0.0.0.0`,
 `PORT` fourni par l’hébergeur, `DATABASE_URL`, `WEB_ORIGIN` exact en HTTPS,
 `COOKIE_SECURE=true`, `MAIL_TRANSPORT=smtp` et configuration SMTP complète.
+Ajouter `GAME_ENCRYPTION_KEY` : 64 caractères hexadécimaux aléatoires, conservés
+entre déploiements pour pouvoir relire les graines des parties persistées.
 Définir `TRUST_PROXY=true` seulement derrière un proxy de confiance maîtrisé.
 Le serveur refuse de démarrer en production avec courrier simulé ou cookies non
 sécurisés. Le mode console expose les liens de récupération uniquement en dev.
 
 ### Frontend Vercel/Netlify
+
+Le déploiement Vercel courant présente le rendu visuel avec `build:preview` (mode
+`showcase`) : aucun appel API/WebSocket et aucune création de compte n’y sont
+effectués. L’application locale conserve son fonctionnement complet. Pour activer
+le serveur déployé plus tard, repasser `buildCommand` sur `pnpm --filter @mimi/web build`
+et configurer les origines/API ci-dessous. Vérification de l’aperçu public :
+`node tools/preview-smoke.mjs https://URL-DU-DEPLOIEMENT`.
 
 Racine du projet : ce monorepo `mimi-app`, commande de build
 `pnpm --filter @mimi/web build`, sortie `apps/web/dist`.
@@ -162,14 +187,16 @@ conservation et vérifier l’envoi SMTP réel, les sauvegardes et la restaurati
 - Email normalisé, pseudo unique sans distinction de casse, nom affiché conservé.
 - Mot de passe 8–128 caractères ; Argon2id 64 Mio, 3 passes, parallélisme 1.
 - Sessions opaques de 7 jours, jetons stockés hachés, cookie httpOnly/SameSite=Lax,
-  préfixe `__Host-` en production. Toutes les mutations exigent origine exacte et CSRF.
+  préfixe `__Host-` en production. Toutes les mutations exigent CSRF et une origine
+  autorisée : exacte en production, alias locaux du même port/protocole en développement.
 - Réinitialisation valable 30 minutes, usage unique, révocation de toutes les sessions.
 - PWA : seuls les fichiers statiques sont mis en cache. Les réponses API et données
   de compte ne le sont jamais. Mise à jour proposée, sans rechargement imposé.
 - Les fichiers du projet FORGE voisin sont indépendants et ne sont pas importés.
-- Dames : cible internationale 10×10 ; toute réduction de variante sera annoncée
-  et validée à l’étape du jeu. Dictionnaire français : licence à vérifier avant inclusion.
-- Limitations actuelles : pas encore de moteur, présence, ami ou partie temps réel.
+- Dames internationales 10×10. Le dictionnaire français est distribué sous licence MIT,
+  avec attribution conservée dans le dossier `bombe-mots`.
+- Limites : présence mono-instance, dictionnaire français même en interface anglaise,
+  aucun déploiement public du serveur certifié par ces vérifications locales.
 
 ## Sources techniques
 

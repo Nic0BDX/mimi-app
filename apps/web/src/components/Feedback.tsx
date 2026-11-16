@@ -4,6 +4,7 @@ export function ErrorMessage({ code }: { code: string | null }) {
   if (!code) return null;
   const known = [
     'NETWORK_ERROR',
+    'API_UNAVAILABLE',
     'VALIDATION_ERROR',
     'INVALID_CREDENTIALS',
     'REGISTRATION_UNAVAILABLE',
@@ -30,6 +31,9 @@ export function ErrorMessage({ code }: { code: string | null }) {
     'PLAYER_COUNT',
     'ACTION_CONFLICT',
     'TURN_EXPIRED',
+    'WORD_UNKNOWN',
+    'WORD_SEQUENCE',
+    'WORD_USED',
   ];
   return (
     <p role="alert" className="feedback error">

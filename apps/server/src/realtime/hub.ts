@@ -4,18 +4,22 @@ import type { PrismaClient } from '@prisma/client';
 import type { FastifyInstance } from 'fastify';
 import { commandSchema, type Presence } from '@mimi/shared';
 import type { Environment } from '../config/env.js';
+import { isAllowedWebOrigin } from '../config/web-origin.js';
 import { readSession, hashToken } from '../modules/auth/session.js';
 import { ApiError } from '../lib/errors.js';
 
 type Handler = (userId: string, payload: unknown, socket: Socket) => Promise<unknown>;
 export function createHub(app: FastifyInstance, db: PrismaClient, env: Environment) {
   const io = new Server(app.server, {
-    cors: { origin: env.WEB_ORIGIN, credentials: true },
+    cors: {
+      origin: (origin, done) => done(null, isAllowedWebOrigin(origin, env)),
+      credentials: true,
+    },
     maxHttpBufferSize: 16_384,
     allowRequest: (req, done) =>
       done(
         null,
-        req.headers.origin === env.WEB_ORIGIN ||
+        isAllowedWebOrigin(req.headers.origin, env) ||
           (!req.headers.origin && req.headers['sec-fetch-site'] === 'same-origin'),
       ),
   });

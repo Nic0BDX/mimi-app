@@ -6,6 +6,7 @@ import rateLimit from '@fastify/rate-limit';
 import { PrismaClient } from '@prisma/client';
 import { ZodError } from 'zod';
 import type { Environment } from './config/env.js';
+import { isAllowedWebOrigin } from './config/web-origin.js';
 import { ApiError } from './lib/errors.js';
 import { readSession, verifyCsrf } from './modules/auth/session.js';
 import { registerAccountRoutes } from './modules/auth/routes.js';
@@ -31,7 +32,7 @@ export async function buildApp(
   });
   await app.register(helmet);
   await app.register(cors, {
-    origin: env.WEB_ORIGIN,
+    origin: (origin, done) => done(null, isAllowedWebOrigin(origin, env)),
     credentials: true,
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'X-CSRF-Token'],

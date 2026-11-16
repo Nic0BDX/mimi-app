@@ -32,10 +32,14 @@ const app = await buildApp(
 await app.listen({ host: '127.0.0.1', port: 3001 });
 const require = createRequire(new URL('../apps/web/package.json', import.meta.url));
 const vite = path.join(path.dirname(require.resolve('vite/package.json')), 'bin/vite.js');
-const web = spawn(process.execPath, [vite, 'preview', '--port', '5173', '--strictPort'], {
-  cwd: path.join(root, 'apps/web'),
-  stdio: 'inherit',
-});
+const web = spawn(
+  process.execPath,
+  [vite, 'preview', '--configLoader', 'runner', '--port', '5173', '--strictPort'],
+  {
+    cwd: path.join(root, 'apps/web'),
+    stdio: 'inherit',
+  },
+);
 let closing = false;
 async function close() {
   if (closing) return;

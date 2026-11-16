@@ -2,9 +2,10 @@
 
 ## Périmètre actuel
 
-Étape 1 implémentée. Les tables des étapes suivantes sont migrées, mais leurs
-routes et événements métier ne sont pas encore activés. L’accueil ne simule
-ni joueurs en ligne, ni invitations, ni résultats de parties.
+Comptes, relations sociales, salons, invitations, chat et six moteurs sont activés.
+L’accueil NIMIMI utilise les profils, présences et parties réellement persistés.
+Les identifiants de moteurs restent stables malgré les noms affichés :
+`morpion`, `puissance-quatre`, `dames`, `carte-frenesie`, `course-ecuries`, `bombe-mots`.
 
 ## Authentification
 
@@ -23,7 +24,9 @@ La déconnexion détruit la session serveur. L’expiration est vérifiée à ch
 requête. Les sessions persistent après redémarrage grâce à PostgreSQL.
 
 Les requêtes mutantes vérifient l’origine, le cookie CSRF et le header correspondant,
-puis le hash CSRF de la session lorsqu’elle existe. CORS n’autorise qu’une origine.
+puis le hash CSRF de la session lorsqu’elle existe. En production, CORS et CSRF
+n’autorisent que l’origine configurée exacte. En développement, les alias de boucle
+locale du même protocole et du même port sont acceptés de manière cohérente avec Socket.IO.
 Les cookies de production sont Secure/httpOnly/SameSite=Lax, préfixés `__Host-`.
 Le déploiement doit être même site HTTPS ou passer par un reverse proxy même origine.
 
@@ -46,9 +49,10 @@ permet de cibler un autre utilisateur.
 sessions, tokens, amitiés, demandes, blocages, notifications et statistiques par
 cascades PostgreSQL. Les messages sont supprimés explicitement. Les références
 de sièges/hôte/événements sont anonymisées via SetNull.
-Avant activation du chat et de Bombe à Mots, la suppression devra également
-expurger les contenus personnels des JSON d’événements et de notifications :
-aucun contenu personnel dans les journaux de jeu n’est autorisé à l’étape 1.
+La suppression retire aussi les notifications contenant le profil de cet acteur
+chez d’autres utilisateurs et remplace ses actions de journal par `redacted`.
+Les snapshots de jeu gardent les coups et mots validés par le dictionnaire pour
+assurer la continuité des parties ; le profil du siège est anonymisé par SetNull.
 
 ## Amis et présence — étape 2
 
@@ -56,9 +60,10 @@ Transactions et contraintes SQL imposent l’unicité des demandes actives dans
 les deux sens et l’ordre canonique des amitiés. Demande inverse = acceptation
 atomique. Blocage = suppression de l’amitié et annulation des demandes/invitations.
 Chaque action vérifie l’identité, le destinataire, le statut et les blocages.
-Redis suivra les connexions par utilisateur avec TTL et délai de déconnexion,
-sans laisser un onglet fermé déclarer hors ligne un autre onglet actif.
-Seuls les amis autorisés recevront les changements de présence.
+Le hub Socket.IO compte les connexions par utilisateur en mémoire, avec délai
+de déconnexion, sans laisser un onglet fermé déclarer hors ligne un autre onglet.
+Seuls les amis autorisés reçoivent les changements de présence. Une seule instance
+Node est supportée ; Redis n’est pas intégré.
 
 ## Salons, boucle et reconnexion — étape 3
 
@@ -73,8 +78,9 @@ Intention client + UUID d’action + version attendue
 ```
 
 Le journal et les snapshots sont internes. Les mains adverses, la pioche, les
-secrets RNG et la durée secrète de la bombe ne font pas partie des DTO publics.
-Le générateur déterministe serveur utilisera un secret cryptographique chiffré
+secrets RNG ne font pas partie des DTO publics. Mot Mystère utilise une échéance
+publique de 15 secondes (facile) ou 10 secondes (difficile), validée par le serveur.
+Le générateur déterministe serveur utilise un secret cryptographique chiffré
 au repos et un compteur persisté pour permettre la reprise et les simulations.
 Chaque partie conserve une version de moteur afin de traiter les évolutions.
 
@@ -85,13 +91,19 @@ L’interface de jeu n’applique jamais de règle faisant autorité.
 
 ## PWA et réseau
 
-Le service worker précache uniquement le shell et les assets originaux. Les
+Le service worker précache uniquement le shell et les assets statiques. Les
 API et transports Socket.IO sont exclus du fallback SPA et du cache. Hors ligne,
 l’accueil reste accessible, les actions de compte renvoient une erreur claire.
 Le stockage navigateur ne contient que langue et préférences audio/vibrations.
-Les améliorations WebSocket de reconnexion seront ajoutées avec la boucle de jeu.
+La reconnexion Socket.IO recharge les vues depuis le serveur avec leur version.
 
 ## Tests et exploitation
+
+`ReferenceArtwork` affiche les zones de l’image fournie dans des fenêtres SVG ;
+seuls les visuels sont réutilisés, les écrans et actions restent des composants React.
+Playwright compare les six couvertures aux pixels source et vérifie 38 captures
+de régression, avec masquage des données de compte et animations suspendues.
+Les captures de contrôle sont conservées dans `docs/previews/` après chaque suite.
 
 Vitest vérifie les contrats et l’égalité des clés FR/EN. Supertest exerce les vraies
 routes contre PostgreSQL migré, dans des schémas jetables isolés. Playwright utilise

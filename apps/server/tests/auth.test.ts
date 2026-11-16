@@ -132,6 +132,19 @@ describe('real PostgreSQL account lifecycle', () => {
       .set('Origin', 'https://attacker.invalid');
     expect(cors.headers['access-control-allow-origin']).not.toBe('https://attacker.invalid');
   });
+  it('accepts a real local sign-in through the Vite loopback alias', async () => {
+    const user = await registered('Loopback_Login');
+    await user.write('post', '/api/auth/logout');
+    const initial = await user.init();
+    const response = await user.agent
+      .post('/api/auth/login')
+      .set('Origin', 'http://127.0.0.1:5173')
+      .set('X-CSRF-Token', initial.body.csrfToken)
+      .send({ email: 'loopback_login@example.test', password: 'Password-123' });
+    expect(response.status).toBe(200);
+    expect(response.body.user.username).toBe('Loopback_Login');
+    expect(response.headers['access-control-allow-origin']).toBe('http://127.0.0.1:5173');
+  });
   it('uses the same login error for unknown email and incorrect password', async () => {
     const user = client();
     await user.init();
@@ -291,6 +304,36 @@ describe('real PostgreSQL account lifecycle', () => {
   it('deletes personal data, related records and every session without affecting other users', async () => {
     const user = await registered('DeleteMe'),
       other = await registered('KeepMe');
+    const game = await database.db.game.create({
+      data: {
+        gameType: 'bombe-mots',
+        hostId: user.id,
+        joinCode: 'DELETE',
+        maxPlayers: 2,
+        options: {},
+        rngSecretEncrypted: 'fixture',
+      },
+    });
+    const event = await database.db.gameEvent.create({
+      data: {
+        gameId: game.id,
+        playerId: user.id,
+        sequence: 1,
+        actionId: crypto.randomUUID(),
+        action: { type: 'word', word: 'chat' },
+        versionBefore: 0,
+        versionAfter: 1,
+        rngCounterBefore: 0,
+        rngCounterAfter: 1,
+      },
+    });
+    const notice = await database.db.notification.create({
+      data: {
+        userId: other.id,
+        type: 'FRIEND_REQUEST',
+        payload: { actor: { id: user.id, username: 'DeleteMe' } },
+      },
+    });
     await database.db.stat.create({ data: { userId: user.id, gameType: 'morpion' } });
     await database.db.friendRequest.create({
       data: {
@@ -305,6 +348,11 @@ describe('real PostgreSQL account lifecycle', () => {
     expect(await database.db.session.count({ where: { userId: user.id } })).toBe(0);
     expect(await database.db.stat.count({ where: { userId: user.id } })).toBe(0);
     expect(await database.db.friendRequest.count({ where: { senderId: user.id } })).toBe(0);
+    expect(await database.db.notification.findUnique({ where: { id: notice.id } })).toBeNull();
+    expect(await database.db.gameEvent.findUnique({ where: { id: event.id } })).toMatchObject({
+      playerId: null,
+      action: { type: 'redacted' },
+    });
     expect((await other.init()).body.user.id).toBe(other.id);
     expect((await user.init()).body.user).toBeNull();
   });

@@ -1,12 +1,14 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router';
-import { ArrowLeft, ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { registerSchema, loginSchema, forgotSchema, resetSchema } from '@mimi/shared';
 import { useT } from '../i18n';
 import { useAuth } from '../stores/auth';
 import { authenticate, request, session, ApiError } from '../lib/api';
 import { AvatarPicker } from '../components/AvatarPicker';
 import { ErrorMessage } from '../components/Feedback';
+import { previewOnly } from '../lib/config';
+import { ReferenceArtwork } from '../components/ReferenceArtwork';
 
 export function AuthPage({ mode }: { mode: 'login' | 'register' | 'forgot' | 'reset' }) {
   const t = useT(),
@@ -38,6 +40,7 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' | 'forgot' | 're
   } as const;
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (previewOnly) return;
     setError(null);
     setBusy(true);
     const form = new FormData(event.currentTarget);
@@ -90,7 +93,9 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' | 'forgot' | 're
     <section className="auth-layout">
       <div className="auth-art" aria-hidden="true">
         <img className="auth-dice" src="/illustrations/hero.svg" alt="" />
-        <span className="eyebrow">MIMI CLUB</span>
+        <span className="auth-wordmark" aria-label="NIMIMI">
+          <ReferenceArtwork art="wordmark" />
+        </span>
         <h2>{t('heroTitle')}</h2>
         <p>{t('tagline')}</p>
       </div>
@@ -100,10 +105,15 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' | 'forgot' | 're
           {t('backHome')}
         </Link>
         <div className="mini-icon">
-          <Sparkles />
+          <ReferenceArtwork art="logo" />
         </div>
         <h1>{t(title[mode])}</h1>
         <p className="muted">{t(mode === 'forgot' ? 'forgotText' : 'authSubtitle')}</p>
+        {previewOnly && (
+          <p role="status" className="feedback">
+            {t('previewNotice')}
+          </p>
+        )}
         {done ? (
           <div role="status" className="success-block">
             <p>{t(mode === 'reset' ? 'resetDone' : 'resetSent')}</p>
@@ -158,7 +168,7 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' | 'forgot' | 're
             )}
             {mode === 'register' && <AvatarPicker value={avatarId} onChange={setAvatarId} />}
             <ErrorMessage code={error} />
-            <button className="button primary full" disabled={busy}>
+            <button className="button primary full" disabled={busy || previewOnly}>
               {t(busy ? 'loading' : submit[mode])}
               <ArrowRight size={18} />
             </button>

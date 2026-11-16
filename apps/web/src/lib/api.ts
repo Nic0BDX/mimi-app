@@ -1,4 +1,5 @@
 import { errorResponseSchema, sessionResponseSchema } from '@mimi/shared';
+import { previewOnly } from './config';
 
 export class ApiError extends Error {
   constructor(public code: string) {
@@ -8,9 +9,11 @@ export class ApiError extends Error {
 let csrfToken = '';
 export const getCsrfToken = () => csrfToken;
 export async function request(path: string, options: RequestInit = {}): Promise<unknown> {
+  if (previewOnly) throw new ApiError('PREVIEW_ONLY');
   try {
     const response = await fetch(`${import.meta.env.VITE_API_ORIGIN ?? ''}/api${path}`, {
       ...options,
+      signal: options.signal ?? AbortSignal.timeout(10_000),
       credentials: 'include',
       headers: {
         ...(options.body ? { 'Content-Type': 'application/json' } : {}),
@@ -18,11 +21,15 @@ export async function request(path: string, options: RequestInit = {}): Promise<
         ...options.headers,
       },
     });
+    if (response.status === 204) return undefined;
+    if (!response.headers.get('content-type')?.includes('application/json'))
+      throw new ApiError('API_UNAVAILABLE');
+    const body: unknown = await response.json();
     if (!response.ok) {
-      const error = errorResponseSchema.safeParse(await response.json());
+      const error = errorResponseSchema.safeParse(body);
       throw new ApiError(error.success ? error.data.error.code : 'INTERNAL_ERROR');
     }
-    return response.status === 204 ? undefined : await response.json();
+    return body;
   } catch (error) {
     if (error instanceof ApiError) throw error;
     throw new ApiError('NETWORK_ERROR');

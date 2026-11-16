@@ -8,7 +8,11 @@ import './styles/games.css';
 import './styles/draughts.css';
 import './styles/frenzy.css';
 import './styles/horses.css';
+import './styles/words.css';
 import './styles/polish.css';
+import './styles/preview.css';
+import '@fontsource-variable/nunito/index.css';
+import './styles/visual-v2.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

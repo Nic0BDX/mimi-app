@@ -2,6 +2,7 @@ import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 import type { PrismaClient, Session } from '@prisma/client';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { Environment } from '../../config/env.js';
+import { isAllowedWebOrigin } from '../../config/web-origin.js';
 import { ApiError } from '../../lib/errors.js';
 
 declare module 'fastify' {
@@ -47,7 +48,7 @@ export function verifyCsrf(req: FastifyRequest, env: Environment) {
   const cookie = req.cookies[cookieNames(env).csrf];
   const header = req.headers['x-csrf-token'];
   if (
-    origin !== env.WEB_ORIGIN ||
+    !isAllowedWebOrigin(origin, env) ||
     !cookie ||
     !/^[a-f0-9]{64}$/.test(cookie) ||
     typeof header !== 'string' ||

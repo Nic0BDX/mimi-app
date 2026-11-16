@@ -2,13 +2,14 @@ import { useCallback, useEffect, useState } from 'react';
 import type { z } from 'zod';
 import { request, ApiError } from './api';
 import { useRealtime } from './realtime';
+import { previewOnly } from './config';
 export function useRemote<T>(path: string, schema: z.ZodType<T>, enabled = true) {
   const revision = useRealtime((s) => s.revision);
   const [data, setData] = useState<T | null>(null),
     [error, setError] = useState<string | null>(null),
     [loading, setLoading] = useState(true);
   const load = useCallback(async () => {
-    if (!enabled) return;
+    if (!enabled || previewOnly) return;
     try {
       setData(schema.parse(await request(path)));
       setError(null);

@@ -38,6 +38,11 @@ test('private hands are filtered for two real players and cards can be played', 
       .poll(() => page.locator('.card-hand .playing-card').count())
       .toBeGreaterThanOrEqual(7);
     await expect(other.locator('.card-hand')).toBeVisible();
+    for (const player of [page, other]) {
+      expect(await player.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+        true,
+      );
+    }
     const fetchRoom = async (p: Page) =>
       roomSchema.parse(
         await p.evaluate(async () =>

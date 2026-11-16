@@ -72,8 +72,7 @@ export class GamesService {
       createdAt: game.createdAt.toISOString(),
       startedAt: game.startedAt?.toISOString() ?? null,
       finishedAt: game.finishedAt?.toISOString() ?? null,
-      turnDeadlineAt:
-        game.gameType === 'bombe-mots' ? null : (game.turnDeadlineAt?.toISOString() ?? null),
+      turnDeadlineAt: game.turnDeadlineAt?.toISOString() ?? null,
       view: member && game.state ? engine.getPlayerView(game.state, id) : null,
     };
   }
