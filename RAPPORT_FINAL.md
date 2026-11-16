@@ -16,7 +16,7 @@ Six jeux sont enregistrés, créables et jouables avec le serveur autoritaire :
 Les modifications locales antérieures sont conservées. L’historique n’a pas été
 réécrit et le dépôt FORGE parent n’a pas été modifié.
 Le code vérifié est publié sur [GitHub, branche main](https://github.com/Nic0BDX/mimi-app),
-au commit fonctionnel `a1f368f`.
+au commit fonctionnel `92e71b2`.
 
 ## Moteurs et persistance
 
@@ -47,7 +47,7 @@ de cartes et la distribution des manches suivantes aux seuls joueurs actifs.
 ## Qualité et interface
 
 - ESLint sans avertissement, Prettier et typage des trois packages vérifiés.
-- 100 tests Vitest valides, avec une vraie base PostgreSQL isolée pour les tests serveur.
+- 107 tests Vitest valides, avec une vraie base PostgreSQL isolée pour les tests serveur.
 - 26 parcours Playwright complets valides : 13 scénarios en mobile et les mêmes en bureau,
   dont six jeux, comptes, présence multi-onglets, clavier, langue, PWA et audio.
 - Couverture du code partagé : instructions **95,41 %**, branches **90,40 %**,
@@ -160,8 +160,9 @@ La [licence MIT originale](https://raw.githubusercontent.com/words/an-array-of-f
 a été vérifiée et l’attribution est conservée dans `bombe-mots/WORDS-LICENSE`.
 Le dictionnaire reste français en interface anglaise.
 
-Le fonctionnement multijoueur nécessite Node persistant, PostgreSQL et une seule
-instance serveur. La présence n’est pas synchronisée entre instances. En production,
+Le fonctionnement Socket.IO nécessite Node persistant, PostgreSQL et une seule
+instance serveur. Le déploiement Vercel utilise PostgreSQL et une synchronisation HTTP.
+En production,
 HTTPS et une clé `GAME_ENCRYPTION_KEY` stable sont requis ; SMTP est nécessaire
 pour la récupération par e-mail. Le mode Vercel
 `showcase` est un aperçu graphique et ne fournit pas le serveur multijoueur.
@@ -183,5 +184,19 @@ Preuves : [résultats](docs/previews/production-check.json),
 [accueil mobile](docs/previews/production-home-mobile.png),
 [connexion ordinateur](docs/previews/production-login-desktop.png),
 [connexion mobile](docs/previews/production-login-mobile.png).
-Le mode public reste limité aux comptes : le multijoueur et la récupération
-par e-mail nécessitent respectivement un serveur persistant et SMTP.
+Les six jeux sont désormais activés en HTTP authentifié avec rafraîchissement
+toutes les 1,5 seconde. Les échéances et les parties restent en PostgreSQL ; les
+robots avancent quand au moins un participant consulte sa partie. La récupération
+par e-mail reste désactivée jusqu’à la configuration SMTP.
+
+Contrôles de cette reprise : 107 tests Vitest, 14 parcours des jeux à deux navigateurs
+ou contre un robot sur mobile et ordinateur, quatre parcours de régression des
+écrans et contrôle anti-découpe aux formats 320×568, 360×640, 390×844, 768×1024
+et 844×390. ESLint, formatage, types, compilation et serveur Vercel compilé valides.
+
+Vérification publique réussie des six jeux avec deux comptes temporaires : salon
+privé, adhésion du second joueur, démarrage, coup légal et état conservé après
+rechargement sur ordinateur et mobile. Le robot avance en production et aucune
+erreur JavaScript n’est observée. Les comptes temporaires sont supprimés.
+[Résultats publics](docs/previews/production-games-check.json) et douze captures
+`docs/previews/live-*-desktop.png` / `live-*-mobile.png` conservés.

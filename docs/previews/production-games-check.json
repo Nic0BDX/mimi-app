@@ -1,0 +1,69 @@
+{
+  "url": "https://mimi-app-seven.vercel.app",
+  "checkedAt": "2026-11-16T17:01:34.774Z",
+  "transport": "authenticated HTTP polling",
+  "results": [
+    {
+      "gameType": "morpion",
+      "create": true,
+      "join": true,
+      "start": true,
+      "legalAction": true,
+      "persistedAfterReload": true,
+      "desktop": true,
+      "mobile": true
+    },
+    {
+      "gameType": "puissance-quatre",
+      "create": true,
+      "join": true,
+      "start": true,
+      "legalAction": true,
+      "persistedAfterReload": true,
+      "desktop": true,
+      "mobile": true
+    },
+    {
+      "gameType": "dames",
+      "create": true,
+      "join": true,
+      "start": true,
+      "legalAction": true,
+      "persistedAfterReload": true,
+      "desktop": true,
+      "mobile": true
+    },
+    {
+      "gameType": "carte-frenesie",
+      "create": true,
+      "join": true,
+      "start": true,
+      "legalAction": true,
+      "persistedAfterReload": true,
+      "desktop": true,
+      "mobile": true
+    },
+    {
+      "gameType": "course-ecuries",
+      "create": true,
+      "join": true,
+      "start": true,
+      "legalAction": true,
+      "persistedAfterReload": true,
+      "desktop": true,
+      "mobile": true
+    },
+    {
+      "gameType": "bombe-mots",
+      "create": true,
+      "join": true,
+      "start": true,
+      "legalAction": true,
+      "persistedAfterReload": true,
+      "desktop": true,
+      "mobile": true
+    }
+  ],
+  "botAdvanced": true,
+  "pageErrors": 0
+}

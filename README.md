@@ -159,13 +159,17 @@ sécurisés. Le mode console expose les liens de récupération uniquement en de
 ### Frontend Vercel/Netlify
 
 Le déploiement public [NIMIMI](https://mimi-app-seven.vercel.app) propose l’accueil,
-l’inscription, la connexion et les sessions persistantes avec PostgreSQL Neon.
-La compilation `node tools/vercel-build.mjs` prépare le frontend et l’API de comptes.
+l’inscription, la connexion, les six jeux et les sessions persistantes avec PostgreSQL Neon.
+La compilation `node tools/vercel-build.mjs` prépare le frontend et l’API complète.
 Les parcours réels sur ordinateur et mobile sont consignés dans
 [production-check.json](docs/previews/production-check.json).
-Ce déploiement utilise `VITE_ACCOUNTS_ONLY=true` : les jeux multijoueurs nécessitent
-encore un serveur persistant. La récupération par e-mail reste désactivée en
-attendant la configuration SMTP.
+Les six jeux publics sont vérifiés dans
+[production-games-check.json](docs/previews/production-games-check.json).
+Ce déploiement utilise `VITE_ACCOUNTS_ONLY=false` et `VITE_HTTP_REALTIME=true` :
+salons, parties, chat et invitations sont synchronisés par HTTP toutes les 1,5 seconde.
+Les robots avancent pendant qu’un joueur consulte sa partie ; les échéances sont
+conservées en base et traitées à la prochaine consultation. La récupération par
+e-mail reste désactivée en attendant la configuration SMTP.
 
 Racine du projet : ce monorepo `mimi-app`, commande de build
 `pnpm --filter @mimi/web build`, sortie `apps/web/dist`.
@@ -176,7 +180,8 @@ ou un reverse proxy HTTPS sous la même origine. Des domaines Vercel et Railway
 indépendants ne conviennent pas à cette politique de cookies sans proxy.
 Le serveur WebSocket ne peut pas être remplacé par un hébergement statique.
 Configurer la réécriture des routes SPA et les headers fournis dans `vercel.json`.
-La production complète nécessite encore les services et domaines de l’éditeur.
+Le serveur persistant reste disponible pour utiliser Socket.IO et faire avancer
+les robots même lorsque tous les navigateurs sont fermés.
 
 Avant ouverture publique : compléter les modèles légaux, choisir les durées de
 conservation et vérifier l’envoi SMTP réel, les sauvegardes et la restauration.

@@ -15,7 +15,7 @@ Projet actif : ce dépôt `mimi-app` uniquement ; ne jamais pousser le dépôt F
 
 Reprise du 16 novembre 2026 : le suivi principal est désormais `../PROGRESS.md`.
 Les six jeux, finitions et vérifications locales sont terminés ; le code a été
-publié sur GitHub, branche `main`, commit fonctionnel `a1f368f`.
+publié sur GitHub, branche `main`, commit fonctionnel `92e71b2`.
 Résultats détaillés : `../RAPPORT_FINAL.md`.
 Hébergement public complet : nécessite un serveur Node persistant, PostgreSQL et SMTP.
 
