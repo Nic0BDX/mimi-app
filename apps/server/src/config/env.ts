@@ -10,7 +10,7 @@ export const envSchema = z
     DATABASE_URL: z.string().startsWith('postgresql://'),
     COOKIE_SECURE: boolean.default(false),
     TRUST_PROXY: boolean.default(false),
-    MAIL_TRANSPORT: z.enum(['console', 'smtp']).default('console'),
+    MAIL_TRANSPORT: z.enum(['console', 'smtp', 'disabled']).default('console'),
     SMTP_HOST: z.string().optional(),
     SMTP_PORT: z.coerce.number().int().min(1).max(65535).default(587),
     SMTP_SECURE: boolean.default(false),
@@ -27,11 +27,11 @@ export const envSchema = z
       env.NODE_ENV === 'production' &&
       (!env.COOKIE_SECURE ||
         !env.WEB_ORIGIN.startsWith('https://') ||
-        env.MAIL_TRANSPORT !== 'smtp')
+        env.MAIL_TRANSPORT === 'console')
     ) {
       ctx.addIssue({
         code: 'custom',
-        message: 'Production requires HTTPS, secure cookies and SMTP.',
+        message: 'Production requires HTTPS, secure cookies and SMTP or explicitly disabled email.',
       });
     }
     if (env.NODE_ENV === 'production' && !env.GAME_ENCRYPTION_KEY)

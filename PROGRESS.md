@@ -15,6 +15,7 @@ Suivi repris de `tools/PROGRESS.md`, sans considérer les acquis comme une nouve
 - [x] Simulations de tous les moteurs, couverture et parcours critiques à deux utilisateurs.
 - [x] Documentation de lancement, architecture et RAPPORT_FINAL.md.
 - [x] Publication des modifications vérifiées sur la branche GitHub du projet.
+- [ ] API de connexion publique sur Vercel, base persistante et test navigateur en production.
 
 Branche : `autonomous-night`. Décisions : `DECISIONS.md`.
 

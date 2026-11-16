@@ -61,6 +61,46 @@ afterAll(async () => {
 });
 
 describe('real PostgreSQL account lifecycle', () => {
+  it('runs persistent accounts without starting multiplayer or pretending to send email', async () => {
+    const accounts = await buildApp(
+      { ...env(database.url), MAIL_TRANSPORT: 'disabled' },
+      {
+        db: database.db,
+        accountsOnly: true,
+        rateLimit: false,
+      },
+    );
+    try {
+      await accounts.ready();
+      const agent = supertest.agent(accounts.server);
+      const initial = await agent.get('/api/auth/session').expect(200);
+      const created = await agent
+        .post('/api/auth/register')
+        .set('Origin', origin)
+        .set('X-CSRF-Token', initial.body.csrfToken)
+        .send({
+          email: 'accounts-only@example.test',
+          username: 'AccountsOnly',
+          password: 'Password-123',
+          avatarId: 'fox',
+        })
+        .expect(201);
+      const saved = await agent.get('/api/auth/session').expect(200);
+      expect(saved.body.user.id).toBe(created.body.user.id);
+      for (const email of ['accounts-only@example.test', 'not-registered@example.test']) {
+        const unavailable = await agent
+          .post('/api/auth/forgot-password')
+          .set('Origin', origin)
+          .set('X-CSRF-Token', saved.body.csrfToken)
+          .send({ email })
+          .expect(503);
+        expect(unavailable.body.error.code).toBe('MAIL_UNAVAILABLE');
+      }
+      await agent.get('/api/catalog').expect(404);
+    } finally {
+      await accounts.close();
+    }
+  });
   it('creates an account, hashes password, returns only public fields and httpOnly cookies', async () => {
     const user = await registered('Nicolas', 'NICOLAS@example.test');
     const stored = await database.db.user.findUniqueOrThrow({ where: { id: user.id } });

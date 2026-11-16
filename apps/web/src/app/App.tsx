@@ -47,7 +47,7 @@ import {
   RankingsPage,
 } from '../pages/MultiplayerPages';
 import { RoomPage } from '../pages/RoomPage';
-import { previewOnly } from '../lib/config';
+import { previewOnly, accountsOnly } from '../lib/config';
 import { AudioAmbience } from '../components/AudioAmbience';
 
 const links = [
@@ -86,11 +86,11 @@ function Layout() {
   const unread = useSocial((s) => s.notifications.filter((n) => !n.readAt).length);
   const userId = user?.id;
   useEffect(() => {
-    if (userId) return connectRealtime();
+    if (userId && !accountsOnly) return connectRealtime();
     socialClear();
   }, [userId, socialClear]);
   useEffect(() => {
-    if (userId) void socialLoad();
+    if (userId && !accountsOnly) void socialLoad();
   }, [userId, revision, socialLoad]);
   useEffect(() => {
     document.documentElement.lang = language;
@@ -261,7 +261,7 @@ function Layout() {
             {t('offline')}
           </div>
         )}
-        {online && user && !connected && (
+        {online && user && !connected && !accountsOnly && (
           <div role="status" className="network-banner">
             {t('reconnecting')}
           </div>

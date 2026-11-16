@@ -17,7 +17,7 @@ import { useT, type TranslationKey } from '../i18n';
 import { useSocial } from '../stores/social';
 import { useRemote } from '../lib/useRemote';
 import { catalogSchema } from '../lib/catalog';
-import { previewOnly } from '../lib/config';
+import { previewOnly, accountsOnly } from '../lib/config';
 import { ReferenceArtwork } from '../components/ReferenceArtwork';
 import { useAuth } from '../stores/auth';
 import { request } from '../lib/api';
@@ -48,7 +48,7 @@ export const catalog: {
 ];
 export function GameCards() {
   const t = useT();
-  const { data } = useRemote('/catalog', catalogSchema);
+  const { data } = useRemote('/catalog', catalogSchema, !accountsOnly);
   return (
     <div className="game-grid">
       {catalog.map((game) => (
@@ -139,7 +139,7 @@ export function HomePage() {
   const notifications = useSocial((s) => s.notifications);
   const reloadSocial = useSocial((s) => s.load);
   const user = useAuth((s) => s.user);
-  const { data: games } = useRemote('/games/mine', homeRoomsSchema, Boolean(user));
+  const { data: games } = useRemote('/games/mine', homeRoomsSchema, Boolean(user) && !accountsOnly);
   const active = user ? games?.rooms.find((room) => room.status === 'IN_PROGRESS') : undefined;
   const invitations = user
     ? notifications.filter(

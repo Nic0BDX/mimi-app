@@ -120,6 +120,7 @@ export const en: Record<keyof typeof fr, string> = {
   rankingsEmpty: 'Leaderboards will be calculated from real completed games.',
   error_NETWORK_ERROR: 'Unable to connect. Check your network and try again.',
   error_API_UNAVAILABLE: 'The service is unavailable. Please try again shortly.',
+  error_MAIL_UNAVAILABLE: 'Email account recovery is not available yet.',
   error_VALIDATION_ERROR:
     'Check the fields: valid username and a password with at least 8 characters.',
   error_INVALID_CREDENTIALS: 'Incorrect email or password.',

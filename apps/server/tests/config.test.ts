@@ -42,4 +42,19 @@ describe('production security configuration', () => {
     expect(cookieNames(env)).toEqual({ session: '__Host-mimi_session', csrf: '__Host-mimi_csrf' });
     expect(cookieOptions(env)).toMatchObject({ httpOnly: true, secure: true, path: '/' });
   });
+  it('supports explicit disabled email without allowing console mail in production', () => {
+    const secure = {
+      ...base,
+      NODE_ENV: 'production',
+      WEB_ORIGIN: 'https://app.example.org',
+      COOKIE_SECURE: 'true',
+      GAME_ENCRYPTION_KEY: 'a'.repeat(64),
+    };
+    expect(envSchema.safeParse({ ...secure, MAIL_TRANSPORT: 'disabled' }).success).toBe(true);
+    expect(envSchema.safeParse({ ...secure, MAIL_TRANSPORT: 'console' }).success).toBe(false);
+    expect(
+      envSchema.safeParse({ ...secure, MAIL_TRANSPORT: 'disabled', COOKIE_SECURE: 'false' })
+        .success,
+    ).toBe(false);
+  });
 });

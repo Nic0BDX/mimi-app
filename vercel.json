@@ -1,7 +1,9 @@
 {
   "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "pnpm --filter @mimi/web build",
+  "buildCommand": "node tools/vercel-build.mjs",
   "outputDirectory": "apps/web/dist",
+  "regions": ["fra1"],
+  "functions": { "api/**/*.ts": { "maxDuration": 30 } },
   "rewrites": [{ "source": "/((?!api/|socket.io/).*)", "destination": "/index.html" }],
   "headers": [
     {

@@ -122,6 +122,7 @@ export const fr = {
   rankingsEmpty: 'Les classements seront calculés à partir de vraies parties terminées.',
   error_NETWORK_ERROR: 'Connexion impossible. Vérifie ton réseau puis réessaie.',
   error_API_UNAVAILABLE: 'Le service est indisponible. Réessaie dans un instant.',
+  error_MAIL_UNAVAILABLE: 'La récupération par e-mail n’est pas encore disponible.',
   error_VALIDATION_ERROR:
     'Vérifie les champs : pseudo autorisé et mot de passe de 8 caractères minimum.',
   error_INVALID_CREDENTIALS: 'Adresse e-mail ou mot de passe incorrect.',

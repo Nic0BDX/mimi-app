@@ -5,6 +5,7 @@ export function ErrorMessage({ code }: { code: string | null }) {
   const known = [
     'NETWORK_ERROR',
     'API_UNAVAILABLE',
+    'MAIL_UNAVAILABLE',
     'VALIDATION_ERROR',
     'INVALID_CREDENTIALS',
     'REGISTRATION_UNAVAILABLE',

@@ -1,5 +1,8 @@
 # Décisions autonomes
 
+- Déploiement : l’alias public est `mimi-app-seven.vercel.app` ; l’alias `mimi-app-nrx5.vercel.app` redirige vers l’authentification Vercel. L’API de connexion était absente (404), malgré le déploiement réussi de l’interface.
+- Pour le périmètre accueil/connexion, exposer les comptes via une fonction Vercel et une base PostgreSQL gratuite en Europe ; garder le serveur complet pour le temps réel. Sans SMTP configuré, la récupération par e-mail renvoie explicitement une indisponibilité identique pour toutes les adresses.
+
 - Périmètre final demandé : accueil, connexion, correction de connexion puis mise à jour GitHub ; aucun nouveau travail sur les règles des jeux.
 - Connexion locale : accepter uniquement les alias de boucle locale du même port/protocole hors production, avec contrôles CORS, CSRF et Socket.IO cohérents. En production, conserver l’origine configurée exacte.
 - API indisponible : borner les requêtes à 10 secondes, reconnaître un repli HTML et permettre de réessayer sans perdre les champs du formulaire.

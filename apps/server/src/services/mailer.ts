@@ -1,10 +1,18 @@
 import nodemailer from 'nodemailer';
 import type { Environment } from '../config/env.js';
+import { ApiError } from '../lib/errors.js';
 
 export interface Mailer {
   sendPasswordReset(email: string, url: string): Promise<void>;
 }
 export function createMailer(env: Environment): Mailer {
+  if (env.MAIL_TRANSPORT === 'disabled') {
+    return {
+      async sendPasswordReset() {
+        throw new ApiError(503, 'MAIL_UNAVAILABLE');
+      },
+    };
+  }
   if (env.MAIL_TRANSPORT === 'console') {
     return {
       async sendPasswordReset(email, url) {

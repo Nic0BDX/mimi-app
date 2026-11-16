@@ -21,7 +21,13 @@ import { targetSchema, respondSchema, requestIdSchema, notificationReadSchema } 
 
 export async function buildApp(
   env: Environment,
-  dependencies: { db?: PrismaClient; mailer?: Mailer; rateLimit?: boolean; logger?: boolean } = {},
+  dependencies: {
+    db?: PrismaClient;
+    mailer?: Mailer;
+    rateLimit?: boolean;
+    logger?: boolean;
+    accountsOnly?: boolean;
+  } = {},
 ) {
   const db = dependencies.db ?? new PrismaClient({ datasourceUrl: env.DATABASE_URL });
   const app = Fastify({
@@ -77,6 +83,13 @@ export async function buildApp(
     return { status: 'ok' };
   });
   await registerAccountRoutes(app, db, env, dependencies.mailer ?? createMailer(env));
+
+  if (dependencies.accountsOnly) {
+    app.addHook('onClose', async () => {
+      if (!dependencies.db) await db.$disconnect();
+    });
+    return app;
+  }
 
   const hub = createHub(app, db, env);
   const friends = new FriendsService(db, hub.emitUser, hub.getPresence);

@@ -83,6 +83,7 @@ export async function registerAccountRoutes(
     { config: { rateLimit: { max: 5, timeWindow: '1 hour' } } },
     async (req, reply) => {
       const input = forgotSchema.parse(req.body);
+      if (env.MAIL_TRANSPORT === 'disabled') throw new ApiError(503, 'MAIL_UNAVAILABLE');
       const user = await db.user.findUnique({ where: { email: input.email } });
       if (user) {
         const token = randomToken();
