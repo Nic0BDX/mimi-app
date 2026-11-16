@@ -1,6 +1,6 @@
 import { io, type Socket } from 'socket.io-client';
 import { create } from 'zustand';
-import { getCsrfToken, ApiError } from './api';
+import { getCsrfToken, ApiError, request } from './api';
 import { useAuth } from '../stores/auth';
 export const useRealtime = create<{
   connected: boolean;
@@ -12,7 +12,34 @@ export const useRealtime = create<{
   socialRevision: 0,
 }));
 let socket: Socket | null = null;
+const polling = import.meta.env.VITE_HTTP_REALTIME === 'true';
 export function connectRealtime() {
+  if (polling) {
+    let stopped = false;
+    let timer: ReturnType<typeof setTimeout>;
+    const refresh = async () => {
+      try {
+        await request('/realtime/poll');
+        if (!stopped)
+          useRealtime.setState((s) => ({
+            connected: true,
+            revision: s.revision + 1,
+            socialRevision: s.socialRevision + 1,
+          }));
+      } catch (error) {
+        if (!stopped) useRealtime.setState({ connected: false });
+        if (error instanceof ApiError && error.code === 'AUTH_REQUIRED')
+          useAuth.getState().setUser(null);
+      }
+      if (!stopped) timer = setTimeout(() => void refresh(), 1500);
+    };
+    void refresh();
+    return () => {
+      stopped = true;
+      clearTimeout(timer);
+      useRealtime.setState({ connected: false });
+    };
+  }
   socket = io(import.meta.env.VITE_API_ORIGIN || location.origin, {
     withCredentials: true,
     auth: (done) => done({ csrfToken: getCsrfToken() }),
@@ -65,6 +92,17 @@ export async function command<T = unknown>(
   payload: unknown,
   requestId = crypto.randomUUID(),
 ): Promise<T> {
+  if (polling) {
+    const data = await request('/realtime/command', {
+      method: 'POST',
+      body: JSON.stringify({ event, payload, requestId }),
+    });
+    useRealtime.setState((s) => ({
+      revision: s.revision + 1,
+      socialRevision: s.socialRevision + 1,
+    }));
+    return data as T;
+  }
   if (!socket?.connected) throw new ApiError('NETWORK_ERROR');
   const response: unknown = await socket.timeout(10_000).emitWithAck(event, { requestId, payload });
   if (!response || typeof response !== 'object' || !('ok' in response))

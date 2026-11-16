@@ -42,12 +42,16 @@ export class FriendsService {
     private db: PrismaClient,
     private emit: EmitUser,
     private presence: (id: string) => Presence,
+    private polling = false,
   ) {}
   async snapshot(id: string) {
     const [relations, incoming, outgoing, blocks] = await Promise.all([
       this.db.friendship.findMany({
         where: { OR: [{ userAId: id }, { userBId: id }] },
-        include: { userA: { select: buddySelect }, userB: { select: buddySelect } },
+        include: {
+          userA: { select: { ...buddySelect, lastSeenAt: true } },
+          userB: { select: { ...buddySelect, lastSeenAt: true } },
+        },
       }),
       this.db.friendRequest.findMany({
         where: { receiverId: id, status: 'PENDING' },
@@ -78,12 +82,15 @@ export class FriendsService {
         const user = r.userAId === id ? r.userB : r.userA;
         return {
           ...buddy(user),
-          presence:
-            this.presence(user.id) === 'offline'
-              ? 'offline'
-              : playing.has(user.id)
-                ? 'playing'
-                : 'online',
+          presence: (
+            this.polling
+              ? !user.lastSeenAt || Date.now() - user.lastSeenAt.getTime() > 30_000
+              : this.presence(user.id) === 'offline'
+          )
+            ? 'offline'
+            : playing.has(user.id)
+              ? 'playing'
+              : 'online',
         };
       }),
       incoming: incoming.map((r) => ({ id: r.id, user: buddy(r.sender) })),

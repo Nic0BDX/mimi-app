@@ -5,7 +5,7 @@ import { envSchema } from './config/env.js';
 let application: ReturnType<typeof buildApp> | undefined;
 export default async function handler(request: IncomingMessage, response: ServerResponse) {
   try {
-    application ??= buildApp(envSchema.parse(process.env), { accountsOnly: true }).catch(
+    application ??= buildApp(envSchema.parse(process.env), { polling: true }).catch(
       (error: unknown) => {
         application = undefined;
         throw error;

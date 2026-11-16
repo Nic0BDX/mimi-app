@@ -8,7 +8,7 @@ import { ZodError } from 'zod';
 import type { Environment } from './config/env.js';
 import { isAllowedWebOrigin } from './config/web-origin.js';
 import { ApiError } from './lib/errors.js';
-import { readSession, verifyCsrf } from './modules/auth/session.js';
+import { readSession, verifyCsrf, requireSession } from './modules/auth/session.js';
 import { registerAccountRoutes } from './modules/auth/routes.js';
 import { createMailer, type Mailer } from './services/mailer.js';
 import { createHub } from './realtime/hub.js';
@@ -27,6 +27,7 @@ export async function buildApp(
     rateLimit?: boolean;
     logger?: boolean;
     accountsOnly?: boolean;
+    polling?: boolean;
   } = {},
 ) {
   const db = dependencies.db ?? new PrismaClient({ datasourceUrl: env.DATABASE_URL });
@@ -92,12 +93,22 @@ export async function buildApp(
   }
 
   const hub = createHub(app, db, env);
-  const friends = new FriendsService(db, hub.emitUser, hub.getPresence);
+  const friends = new FriendsService(db, hub.emitUser, hub.getPresence, dependencies.polling);
   registerFriendRoutes(app, friends);
   const games = new GamesService(db, hub, await gameKey(env));
   registerGameRoutes(app, hub, games);
-  await games.recover();
-  games.run();
+  if (dependencies.polling) {
+    app.get('/api/realtime/poll', async (req) => {
+      const id = requireSession(req).userId;
+      await db.user.update({ where: { id }, data: { lastSeenAt: new Date() } });
+      await games.online(id);
+      await games.tick(id);
+      return { ok: true };
+    });
+  } else {
+    await games.recover();
+    games.run();
+  }
   hub.register('friend:request', targetSchema, (id, b) => friends.request(id, b.targetUserId));
   hub.register('friend:respond', respondSchema, (id, b) =>
     friends.respond(id, b.requestId, b.accept),

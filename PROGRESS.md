@@ -17,6 +17,9 @@ Suivi repris de `tools/PROGRESS.md`, sans considérer les acquis comme une nouve
 - [x] Publication des modifications vérifiées sur la branche GitHub du projet.
 - [x] API de connexion publique sur Vercel, base persistante et test navigateur en production.
 
+- [ ] Corriger les découpes du titre et des illustrations de l’accueil mobile.
+- [ ] Activer et vérifier les six jeux sur le site public, avec salons synchronisés.
+
 Branche : `autonomous-night`. Décisions : `DECISIONS.md`.
 
 Vérifié le 16 novembre 2026 : 100 tests Vitest, 26 parcours Playwright complets

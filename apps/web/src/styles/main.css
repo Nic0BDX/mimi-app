@@ -1261,7 +1261,7 @@ input[type='checkbox'] {
     height: 220px;
   }
 }
-@media (max-width: 1000px) and (min-width: 761px) {
+@media (max-width: 1000px) and (min-width: 901px) {
   .home-columns {
     grid-template-columns: 1fr;
   }
@@ -1303,7 +1303,7 @@ input[type='checkbox'] {
     display: none;
   }
 }
-@media (max-width: 760px) {
+@media (max-width: 900px) {
   .sidebar {
     display: none;
   }

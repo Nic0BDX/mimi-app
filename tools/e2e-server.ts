@@ -19,6 +19,7 @@ const app = await buildApp(
   {
     db: database.db,
     rateLimit: false,
+    polling: process.env.VITE_HTTP_REALTIME === 'true',
     mailer: {
       async sendPasswordReset(email, url) {
         await fs.appendFile(

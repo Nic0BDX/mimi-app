@@ -823,7 +823,7 @@ body {
     gap: 12px;
   }
 }
-@media (min-width: 761px) and (max-width: 1200px) {
+@media (min-width: 901px) and (max-width: 1200px) {
   .visual-v2 .sidebar {
     width: 198px;
     padding-inline: 11px;
@@ -942,7 +942,7 @@ body {
     font-size: 0.7rem;
   }
 }
-@media (max-width: 760px) {
+@media (max-width: 900px) {
   .visual-v2 .sidebar {
     display: none;
   }
@@ -1137,6 +1137,7 @@ body {
     z-index: -1;
   }
   .mobile-home-brand {
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1200,6 +1201,8 @@ body {
     height: 64px;
   }
   .mobile-game-toys {
+    flex-shrink: 0;
+    overflow: visible;
     width: 205px;
     height: 130px;
     object-fit: contain;
@@ -1210,6 +1213,9 @@ body {
     animation: toys-drift 6s ease-in-out infinite;
   }
   .mobile-landing > h1 {
+    flex-shrink: 0;
+    width: 100%;
+    overflow-wrap: anywhere;
     font-size: 1.85rem;
     line-height: 1.15;
     font-weight: 800;
@@ -1223,6 +1229,7 @@ body {
     z-index: 2;
   }
   .mobile-quick-actions {
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -1348,7 +1355,8 @@ body {
     padding-top: calc(24px + env(safe-area-inset-top));
     padding-bottom: 155px;
   }
-  .mobile-home-brand > img {
+  .mobile-home-brand > img,
+  .mobile-home-brand > .reference-art {
     width: 67px;
     height: 67px;
   }
@@ -1375,14 +1383,20 @@ body {
     min-height: 48px;
   }
 }
-@media (max-width: 760px) and (max-height: 740px) {
+@media (max-width: 900px) and (max-height: 740px) {
   .mobile-landing {
     padding-top: calc(15px + env(safe-area-inset-top));
     padding-bottom: 135px;
   }
-  .mobile-home-brand > img {
+  .mobile-home-brand > img,
+  .mobile-home-brand > .reference-art {
     width: 55px;
     height: 55px;
+    margin-bottom: -12px;
+  }
+  .mobile-home-brand > strong > .reference-art {
+    width: 180px;
+    height: 54px;
   }
   .mobile-home-brand > strong {
     font-size: 3.1rem;

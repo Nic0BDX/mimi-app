@@ -36,7 +36,11 @@ export function ReferenceArtwork({
       className={`reference-art ${className ?? ''}`}
       viewBox={referenceFrames[art]}
       preserveAspectRatio={
-        art === 'logo' || art === 'wordmark' || art === 'mobile' || art === 'resume'
+        art === 'logo' ||
+        art === 'wordmark' ||
+        art === 'mobile' ||
+        art === 'resume' ||
+        art === 'mobile-landscape'
           ? 'xMidYMid meet'
           : 'xMidYMid slice'
       }
@@ -58,7 +62,7 @@ export function ReferenceArtwork({
         )}
         {art === 'wordmark' && (
           <filter id={`${id}-alpha`} colorInterpolationFilters="sRGB">
-            <feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 1 1 1 0 -0.55" />
+            <feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 2 1 0 0 -0.9" />
           </filter>
         )}
       </defs>

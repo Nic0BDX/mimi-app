@@ -5,10 +5,11 @@ import type { FastifyInstance } from 'fastify';
 import { commandSchema, type Presence } from '@mimi/shared';
 import type { Environment } from '../config/env.js';
 import { isAllowedWebOrigin } from '../config/web-origin.js';
-import { readSession, hashToken } from '../modules/auth/session.js';
+import { readSession, hashToken, requireSession } from '../modules/auth/session.js';
 import { ApiError } from '../lib/errors.js';
 
-type Handler = (userId: string, payload: unknown, socket: Socket) => Promise<unknown>;
+type CommandSocket = Pick<Socket, 'join' | 'leave'>;
+type Handler = (userId: string, payload: unknown, socket: CommandSocket) => Promise<unknown>;
 export function createHub(app: FastifyInstance, db: PrismaClient, env: Environment) {
   const io = new Server(app.server, {
     cors: {
@@ -37,6 +38,16 @@ export function createHub(app: FastifyInstance, db: PrismaClient, env: Environme
   const getPresence = (id: string): Presence =>
     connections.has(id) || grace.has(id) ? 'online' : 'offline';
   const publishedPresence = new Map<string, Presence>();
+  app.post('/api/realtime/command', async (req) => {
+    const userId = requireSession(req).userId;
+    const input = z.object({ event: z.string().max(80), payload: z.unknown() }).parse(req.body);
+    const handler = handlers.get(input.event);
+    if (!handler) throw new ApiError(400, 'INVALID_INPUT');
+    return handler.handle(userId, handler.schema.parse(input.payload), {
+      join: async () => {},
+      leave: async () => {},
+    });
+  });
   async function broadcast(id: string) {
     const relations = await db.friendship.findMany({
       where: { OR: [{ userAId: id }, { userBId: id }] },
@@ -188,7 +199,7 @@ export function createHub(app: FastifyInstance, db: PrismaClient, env: Environme
     register<T>(
       name: string,
       schema: z.ZodType<T>,
-      handler: (id: string, payload: T, socket: Socket) => Promise<unknown>,
+      handler: (id: string, payload: T, socket: CommandSocket) => Promise<unknown>,
     ) {
       handlers.set(name, {
         schema,

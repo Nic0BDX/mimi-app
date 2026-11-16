@@ -764,12 +764,15 @@ export class GamesService {
           },
         });
   }
-  async tick() {
+  async tick(userId?: string) {
     if (this.ticking) return;
     this.ticking = true;
     try {
       const rows = await this.db.game.findMany({
-        where: { status: 'IN_PROGRESS' },
+        where: {
+          status: 'IN_PROGRESS',
+          ...(userId ? { players: { some: { userId, leftAt: null } } } : {}),
+        },
         include,
         take: 100,
       });
