@@ -1214,6 +1214,7 @@ body {
   }
   .mobile-landing > h1 {
     flex-shrink: 0;
+    padding-bottom: 4px;
     width: 100%;
     overflow-wrap: anywhere;
     font-size: 1.85rem;
