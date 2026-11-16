@@ -128,7 +128,8 @@ pnpm test:e2e
 Installation et lancement : voir [README.md](README.md). Les tests emploient des
 schémas aléatoires dans une base dont le nom finit par `_test` ; ils ne réinitialisent
 pas la base de développement. La CI exécute maintenant couverture et simulations.
-La CI distante elle-même n’a pas été exécutée pendant cette session locale.
+Les contrôles GitHub Actions ont été déclenchés par la publication de la branche ;
+leur résultat distant est consultable dans [Actions](https://github.com/Nic0BDX/mimi-app/actions?query=branch%3Aautonomous-night).
 
 Dans ce bac à sable Windows, pnpm est absent du PATH et esbuild ne peut pas lire
 les répertoires parents de l’espace autorisé. La première vérification utilisait
