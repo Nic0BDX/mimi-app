@@ -15,6 +15,8 @@ Six jeux sont enregistrés, créables et jouables avec le serveur autoritaire :
 
 Les modifications locales antérieures sont conservées. L’historique n’a pas été
 réécrit et le dépôt FORGE parent n’a pas été modifié.
+Le code vérifié est publié sur [GitHub, branche autonomous-night](https://github.com/Nic0BDX/mimi-app/tree/autonomous-night),
+au commit fonctionnel `ca2ac82`, sans fusion dans `main`.
 
 ## Moteurs et persistance
 

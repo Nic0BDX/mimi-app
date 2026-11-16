@@ -14,7 +14,7 @@ Suivi repris de `tools/PROGRESS.md`, sans considérer les acquis comme une nouve
 - [x] Finitions, accessibilité, PWA et i18n.
 - [x] Simulations de tous les moteurs, couverture et parcours critiques à deux utilisateurs.
 - [x] Documentation de lancement, architecture et RAPPORT_FINAL.md.
-- [ ] Publication des modifications vérifiées sur la branche GitHub du projet.
+- [x] Publication des modifications vérifiées sur la branche GitHub du projet.
 
 Branche : `autonomous-night`. Décisions : `DECISIONS.md`.
 
@@ -29,4 +29,5 @@ Visuels issus de la référence : comparaison des 12 cadrages, écart moyen maxi
 Commandes standard de compilation et test du serveur compilé confirmées lors de
 la reprise, avec les autorisations natives Windows. Lanceur nuit réparé et quatre
 scénarios dédiés validés. Limites documentées dans `RAPPORT_FINAL.md`.
-Publication GitHub en cours ; aucun hébergement public complet certifié.
+Publication GitHub vérifiée : branche `autonomous-night`, commit fonctionnel
+`ca2ac82`. Aucun hébergement public complet certifié.

@@ -8,14 +8,14 @@
 - [x] 4c. Carte Frénésie et informations cachées.
 - [x] 4d. Course des Écuries.
 - [x] 4e. Bombe à Mots et dictionnaire sous licence vérifiée.
-- [ ] 5. Finitions, simulations, tests complets, documentation et publication GitHub.
+- [x] 5. Finitions, simulations, tests complets, documentation et publication GitHub.
 
 Autorisation : poursuivre toutes les étapes sans nouvelle validation intermédiaire.
 Projet actif : ce dépôt `mimi-app` uniquement ; ne jamais pousser le dépôt FORGE parent.
 
 Reprise du 16 novembre 2026 : le suivi principal est désormais `../PROGRESS.md`.
-Les six jeux, finitions et vérifications locales sont terminés ; la publication
-GitHub historique de l’étape 5 n’a pas été effectuée et n’est pas certifiée ici.
+Les six jeux, finitions et vérifications locales sont terminés ; le code a été
+publié sur GitHub, branche `autonomous-night`, commit fonctionnel `ca2ac82`.
 Résultats détaillés : `../RAPPORT_FINAL.md`.
 Hébergement public complet : nécessite un serveur Node persistant, PostgreSQL et SMTP.
 
