@@ -25,6 +25,7 @@
     "simulate": "pnpm --filter @mimi/server exec tsx ../../tools/simulate.ts",
     "test:e2e": "playwright test",
     "test:runtime": "pnpm --filter @mimi/server exec tsx ../../tools/runtime-smoke.mjs",
+    "test:accounts-runtime": "pnpm --filter @mimi/server exec tsx ../../tools/runtime-smoke.mjs --accounts",
     "db:generate": "pnpm --filter @mimi/server db:generate",
     "db:migrate": "pnpm --filter @mimi/server db:migrate",
     "db:test:start": "node tools/test-postgres.mjs",

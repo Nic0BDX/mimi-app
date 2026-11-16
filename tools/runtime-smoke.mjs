@@ -13,7 +13,13 @@ const port = probe.address().port;
 await new Promise((resolve) => probe.close(resolve));
 const processServer = spawn(
   process.execPath,
-  [fileURLToPath(new URL('../apps/server/dist/main.js', import.meta.url))],
+  process.argv.includes('--accounts')
+    ? [
+        '--input-type=module',
+        '-e',
+        `import { createServer } from 'node:http'; import handler from ${JSON.stringify(new URL('../apps/server/dist/serverless.js', import.meta.url).href)}; createServer(handler).listen(Number(process.env.PORT), '127.0.0.1');`,
+      ]
+    : [fileURLToPath(new URL('../apps/server/dist/main.js', import.meta.url))],
   {
     env: {
       ...process.env,

@@ -14,6 +14,9 @@ if (process.env.VERCEL_ENV === 'production' && !process.env.DATABASE_URL)
   throw new Error('Production accounts require DATABASE_URL.');
 run([prisma, 'generate', '--schema', schema]);
 if (process.env.DATABASE_URL) run([prisma, 'migrate', 'deploy', '--schema', schema]);
+const tsupPackage = serverRequire.resolve('tsup/package.json');
+const tsup = path.resolve(path.dirname(tsupPackage), serverRequire('tsup/package.json').bin.tsup);
+run([tsup], path.join(root, 'apps/server'));
 const environment = process.env.DATABASE_URL
   ? process.env
   : { ...process.env, VITE_PREVIEW_ONLY: 'true' };

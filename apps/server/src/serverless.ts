@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { buildApp } from '../apps/server/src/app.js';
-import { envSchema } from '../apps/server/src/config/env.js';
+import { buildApp } from './app.js';
+import { envSchema } from './config/env.js';
 
 let application: ReturnType<typeof buildApp> | undefined;
 export default async function handler(request: IncomingMessage, response: ServerResponse) {
